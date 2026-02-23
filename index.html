@@ -202,12 +202,75 @@
     }
     .demo-banner.hidden { display: none; }
 
+    /* Hide mobile list on desktop */
+    .kpi-mobile-list { display: none; }
+    @media (max-width: 768px) {
+      .kpi-mobile-list { display: block; }
+    }
+
     /* ── KPI Cards ── */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       margin-bottom: 24px;
+    }
+    /* Desktop: show as two separate grid rows */
+    @media (min-width: 769px) {
+      .kpi-carousel-wrap { display: contents; }
+      .kpi-dots { display: none; }
+      .kpi-grid { display: grid; }
+      #kpiCarouselWrap .kpi-grid { grid-template-columns: repeat(4,1fr); }
+    }
+
+    /* KPI as a stacked list — one row per stat */
+    .kpi-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .kpi-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .kpi-row:last-child { border-bottom: none; }
+    .kpi-row:hover { background: rgba(255,255,255,0.02); }
+    .kpi-row-left {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .kpi-row-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .kpi-row-dot.orange { background: var(--accent); box-shadow: 0 0 6px rgba(240,160,80,0.5); }
+    .kpi-row-dot.green  { background: var(--green);  box-shadow: 0 0 6px rgba(62,207,142,0.5); }
+    .kpi-row-dot.blue   { background: var(--blue);   box-shadow: 0 0 6px rgba(79,142,247,0.5); }
+    .kpi-row-dot.red    { background: var(--red);    box-shadow: 0 0 6px rgba(240,90,90,0.5); }
+    .kpi-row-label {
+      font-size: 13px; color: var(--muted); font-weight: 500;
+    }
+    .kpi-row-sub {
+      font-size: 11px; color: var(--muted); opacity: 0.6; margin-top: 1px;
+    }
+    .kpi-row-right { text-align: right; }
+    .kpi-row-value {
+      font-family: var(--font-head);
+      font-size: 22px; font-weight: 800; color: var(--text); line-height: 1;
+    }
+
+    @media (max-width: 768px) {
+      .kpi-list { border-radius: 10px; margin-bottom: 12px; }
+      .kpi-row { padding: 13px 14px; }
+      .kpi-row-value { font-size: 20px; }
+      .kpi-row-label { font-size: 12px; }
     }
 
     .kpi-card {
@@ -555,12 +618,37 @@
       .config-btn { font-size: 11px; padding: 5px 9px; }
       .refresh-btn { padding: 6px 10px; font-size: 12px; }
 
-      /* KPI */
-      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-      .kpi-card { padding: 13px 13px 16px; border-radius: 10px; }
-      .kpi-value { font-size: 20px; }
-      .kpi-label { font-size: 9px; letter-spacing: 1px; }
-      .kpi-sub { font-size: 10px; margin-top: 4px; }
+      /* KPI — list on mobile */
+      #kpiGrid1, #kpiGrid2 { display: none !important; }
+      .kpi-mobile-list {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 12px;
+      }
+      .kpi-mobile-row {
+        display: flex; align-items: center;
+        justify-content: space-between;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+      .kpi-mobile-row:last-child { border-bottom: none; }
+      .kpi-mobile-left { display: flex; align-items: center; gap: 10px; }
+      .kpi-mobile-dot {
+        width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+      }
+      .kpi-mobile-dot.orange { background: var(--accent); }
+      .kpi-mobile-dot.green  { background: var(--green); }
+      .kpi-mobile-dot.blue   { background: var(--blue); }
+      .kpi-mobile-dot.red    { background: var(--red); }
+      .kpi-mobile-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+      .kpi-mobile-sub { font-size: 10px; color: var(--muted); opacity: 0.6; margin-top: 1px; }
+      .kpi-mobile-val {
+        font-family: var(--font-head);
+        font-size: 18px; font-weight: 800; color: var(--text);
+        text-align: right;
+      }
 
       /* Filter bar */
       .filter-bar { flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
@@ -760,8 +848,8 @@
       </div>
     </div>
 
-    <!-- KPI Cards row 1 -->
-    <div class="kpi-grid">
+    <!-- KPI Cards row 1 (desktop grid) -->
+    <div class="kpi-grid" id="kpiGrid1">
       <div class="kpi-card orange">
         <div class="kpi-label">Tổng đơn hàng</div>
         <div class="kpi-value" id="kpi-total">—</div>
@@ -784,15 +872,15 @@
       </div>
     </div>
 
-    <!-- KPI Cards row 2: Lợi nhuận & ADS -->
-    <div class="kpi-grid" style="margin-bottom:24px;">
+    <!-- KPI Cards row 2 (desktop grid) -->
+    <div class="kpi-grid" id="kpiGrid2" style="margin-bottom:24px;">
       <div class="kpi-card green">
         <div class="kpi-label">💰 Lãi Tổng</div>
         <div class="kpi-value" id="kpi-lai-tong">—</div>
         <div class="kpi-sub" id="kpi-lai-tong-sub">Tổng lợi nhuận</div>
       </div>
       <div class="kpi-card orange">
-        <div class="kpi-label">📈 Lãi Ngày</div>
+        <div class="kpi-label" id="kpi-lai-ngay-label">📈 Lãi Ngày</div>
         <div class="kpi-value" id="kpi-lai-ngay">—</div>
         <div class="kpi-sub">Lợi nhuận hôm nay</div>
       </div>
@@ -805,6 +893,42 @@
         <div class="kpi-label">💵 Lợi nhuận/đơn TB</div>
         <div class="kpi-value" id="kpi-loi-nhuan-avg">—</div>
         <div class="kpi-sub">Trung bình mỗi đơn</div>
+      </div>
+    </div>
+
+    <!-- KPI Mobile List (chỉ hiện trên điện thoại) -->
+    <div class="kpi-mobile-list">
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot orange"></div><div><div class="kpi-mobile-label">Tổng đơn hàng</div><div class="kpi-mobile-sub" id="m-kpi-total-sub"></div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-total">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot green"></div><div><div class="kpi-mobile-label">Doanh thu</div><div class="kpi-mobile-sub" id="m-kpi-revenue-sub"></div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-revenue">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot blue"></div><div><div class="kpi-mobile-label">TB mỗi đơn</div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-avg">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot red"></div><div><div class="kpi-mobile-label">Tổng cân nặng</div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-weight">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot green"></div><div><div class="kpi-mobile-label">💰 Lãi Tổng</div><div class="kpi-mobile-sub" id="m-kpi-lai-tong-sub"></div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-lai-tong" style="color:var(--green)">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot orange"></div><div><div class="kpi-mobile-label" id="m-kpi-lai-ngay-label">📈 Lãi Ngày</div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-lai-ngay">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot red"></div><div><div class="kpi-mobile-label">📣 Chi phí ADS</div><div class="kpi-mobile-sub" id="m-kpi-ads-sub"></div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-ads">—</div>
+      </div>
+      <div class="kpi-mobile-row">
+        <div class="kpi-mobile-left"><div class="kpi-mobile-dot blue"></div><div><div class="kpi-mobile-label">💵 Lợi nhuận/đơn TB</div></div></div>
+        <div class="kpi-mobile-val" id="m-kpi-loi-nhuan-avg">—</div>
       </div>
     </div>
 
@@ -1054,8 +1178,8 @@ async function loadData() {
       document.getElementById('statusDot').classList.add('offline');
       // Fallback demo
       document.getElementById('demoBanner').classList.remove('hidden');
-      document.getElementById('demoBanner').querySelector('span').innerHTML =
-        '⚠️ <strong>Không thể kết nối Sheet</strong> — Đang hiển thị dữ liệu demo. Kiểm tra URL và quyền truy cập.';
+      const bannerSpan = document.getElementById('demoBanner').querySelector('span');
+      if (bannerSpan) bannerSpan.innerHTML = '⚠️ <strong>Không thể kết nối Sheet</strong> — Đang hiển thị dữ liệu demo. Kiểm tra URL và quyền truy cập.';
       processOrders(DEMO_DATA, true);
     }
   }
@@ -1230,9 +1354,8 @@ function renderKPIs(rows, isDemo) {
   const laiNgay = currentFilter === 'today' ? totalLN : 0;
 
   document.getElementById('kpi-total').textContent = total;
-  document.getElementById('kpi-total-sub').innerHTML = isDemo
-    ? '<span style="color:var(--muted)">Demo data</span>'
-    : '<span class="up">↑ Thực tế</span>';
+  const totalSubEl = document.getElementById('kpi-total-sub');
+  if (totalSubEl) totalSubEl.textContent = isDemo ? 'Demo data' : '↑ Thực tế';
   document.getElementById('kpi-revenue').textContent = formatMoney(revenue);
   document.getElementById('kpi-revenue-sub').textContent = `COD: ${formatMoney(cod)}đ · Ship: ${formatMoney(ship)}đ`;
   document.getElementById('kpi-avg').textContent = formatMoney(avg);
@@ -1243,7 +1366,8 @@ function renderKPIs(rows, isDemo) {
   document.getElementById('kpi-lai-tong-sub').textContent = `Lợi nhuận/đơn TB: ${formatMoney(avgLN)}đ`;
 
   const laiNgayLabel = { today:'Hôm nay', week:'7 ngày', month:'Tháng này', all:'Tổng', custom:'Kỳ này' };
-  document.querySelector('[id=kpi-lai-ngay]').previousElementSibling.textContent = `📈 Lãi ${laiNgayLabel[currentFilter]||''}`;
+  const laiNgayLabelEl = document.getElementById('kpi-lai-ngay-label');
+  if (laiNgayLabelEl) laiNgayLabelEl.textContent = `📈 Lãi ${laiNgayLabel[currentFilter]||''}`;
   document.getElementById('kpi-lai-ngay').textContent = formatMoney(totalLN) + 'đ';
   document.getElementById('kpi-lai-ngay').style.color = totalLN >= 0 ? 'var(--accent)' : 'var(--red)';
 
@@ -1252,6 +1376,31 @@ function renderKPIs(rows, isDemo) {
     ? `${((totalAds/revenue)*100).toFixed(1)}% doanh thu`
     : `${adsInRange.length} khoản`;
   document.getElementById('kpi-loi-nhuan-avg').textContent = formatMoney(avgLN) + 'đ';
+
+  // ── Sync mobile list ──
+  const laiNgayColor = totalLN >= 0 ? 'var(--accent)' : 'var(--red)';
+  const laiTongColor = laiTong >= 0 ? 'var(--green)' : 'var(--red)';
+  const adsSub = revenue ? `${((totalAds/revenue)*100).toFixed(1)}% doanh thu` : `${adsInRange.length} khoản`;
+  const revSub = `COD: ${formatMoney(cod)}đ · Ship: ${formatMoney(ship)}đ`;
+  const setM = (id, val, color) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val;
+    if (color) el.style.color = color;
+  };
+  setM('m-kpi-total',          total);
+  setM('m-kpi-total-sub',      isDemo ? 'Demo data' : '↑ Thực tế');
+  setM('m-kpi-revenue',        formatMoney(revenue) + 'đ');
+  setM('m-kpi-revenue-sub',    revSub);
+  setM('m-kpi-avg',            formatMoney(avg) + 'đ');
+  setM('m-kpi-weight',         weight.toFixed(1) + ' kg');
+  setM('m-kpi-lai-tong',       formatMoney(laiTong) + 'đ', laiTongColor);
+  setM('m-kpi-lai-tong-sub',   `LN/đơn TB: ${formatMoney(avgLN)}đ`);
+  setM('m-kpi-lai-ngay',       formatMoney(totalLN) + 'đ', laiNgayColor);
+  setM('m-kpi-lai-ngay-label', `📈 Lãi ${laiNgayLabel[currentFilter]||''}`);
+  setM('m-kpi-ads',            formatMoney(totalAds) + 'đ');
+  setM('m-kpi-ads-sub',        adsSub);
+  setM('m-kpi-loi-nhuan-avg',  formatMoney(avgLN) + 'đ');
 }
 
 function processOrders(data, isDemo) {
@@ -1259,7 +1408,8 @@ function processOrders(data, isDemo) {
   applyFilter();
   // Set isDemo flag on first load
   if (isDemo) {
-    document.getElementById('kpi-total-sub').innerHTML = '<span style="color:var(--muted)">Demo data</span>';
+    const sub = document.getElementById('kpi-total-sub');
+    if (sub) sub.textContent = 'Demo data';
   }
 }
 
@@ -1363,6 +1513,7 @@ function renderDoughnutChart(rows) {
 // ── Table ──
 function renderTable(rows) {
   const wrap = document.getElementById('tableWrap');
+  if (!wrap) return;
   if (!rows.length) {
     wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có đơn hàng nào</div>';
     return;
@@ -1480,6 +1631,7 @@ function renderProducts(rows) {
   });
   const sorted = Object.entries(map).sort((a,b) => b[1].count - a[1].count);
   const grid = document.getElementById('productsGrid');
+  if (!grid) return;
   if (!sorted.length) {
     grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📦</div>Không có dữ liệu</div>';
     return;
@@ -1624,12 +1776,41 @@ function renderAdsPage() {
   wrap.innerHTML = html;
 }
 
+// ── KPI Carousel dots ──
+function initKpiDots() {
+  const dots = document.getElementById('kpiDots');
+  if (!dots) return;
+  const isMobile = window.innerWidth <= 768;
+  if (!isMobile) { dots.innerHTML = ''; return; }
+  const cards = document.querySelectorAll('.kpi-card');
+  dots.innerHTML = Array.from(cards).map((_,i) =>
+    `<div class="kpi-dot${i===0?' active':''}" onclick="scrollToKpi(${i})"></div>`
+  ).join('');
+}
+
+function updateKpiDots() {
+  const carousel = document.getElementById('kpiCarousel');
+  if (!carousel) return;
+  const cards = carousel.querySelectorAll('.kpi-card');
+  const dots = document.querySelectorAll('.kpi-dot');
+  if (!dots.length) return;
+  let closest = 0, minDist = Infinity;
+  cards.forEach((c, i) => {
+    const dist = Math.abs(c.getBoundingClientRect().left - carousel.getBoundingClientRect().left);
+    if (dist < minDist) { minDist = dist; closest = i; }
+  });
+  dots.forEach((d,i) => d.classList.toggle('active', i === closest));
+}
+
+window.addEventListener('resize', initKpiDots);
+
 // ── Init ──
 // Set default filter date range
 const _today = new Date().toISOString().split('T')[0];
 document.getElementById('filter-from').value = _today;
 document.getElementById('filter-to').value   = _today;
 loadData();
+setTimeout(initKpiDots, 300);
 </script>
 </body>
 </html>
