@@ -542,11 +542,157 @@
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
       .charts-row { grid-template-columns: 1fr; }
     }
+
+    /* ══ MOBILE RESPONSIVE ══ */
     @media (max-width: 768px) {
       .sidebar { display: none; }
-      .main { margin-left: 0; }
-      .content { padding: 20px 16px; }
-      .kpi-grid { grid-template-columns: 1fr 1fr; }
+      .main { margin-left: 0; padding-bottom: 72px; }
+      .content { padding: 12px 12px 20px; }
+
+      /* Topbar */
+      .topbar { padding: 0 12px; height: 50px; gap: 8px; }
+      .topbar-title { font-size: 13px; font-weight: 700; }
+      .config-btn { font-size: 11px; padding: 5px 9px; }
+      .refresh-btn { padding: 6px 10px; font-size: 12px; }
+
+      /* KPI */
+      .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+      .kpi-card { padding: 13px 13px 16px; border-radius: 10px; }
+      .kpi-value { font-size: 20px; }
+      .kpi-label { font-size: 9px; letter-spacing: 1px; }
+      .kpi-sub { font-size: 10px; margin-top: 4px; }
+
+      /* Filter bar */
+      .filter-bar { flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+      .filter-label { display: none; }
+      .filter-divider { display: none; }
+      .filter-btn { padding: 6px 13px; font-size: 11px; flex: 1; text-align: center; }
+      .filter-custom { width: 100%; gap: 6px; }
+      .filter-custom input[type=date] { flex: 1; font-size: 12px; padding: 7px 8px; }
+
+      /* Charts */
+      .charts-row { grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+      .chart-card { padding: 14px 12px; border-radius: 10px; }
+      .chart-wrap { height: 160px; }
+      .card-title { font-size: 13px; }
+
+      /* Table card — convert to mobile cards */
+      .table-card { border-radius: 10px; }
+      .table-header { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
+      .table-header > div:last-child { width: 100%; }
+      .search-box { width: 100%; }
+      .search-box input { width: 100%; font-size: 13px; }
+      .sort-btn { font-size: 11px; padding: 6px 10px; }
+
+      /* Hide desktop table, show mobile cards */
+      .desktop-table { display: none !important; }
+      .mobile-cards { display: block !important; }
+
+      /* Products */
+      .products-row { grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
+      .product-chip { padding: 12px 10px; border-radius: 8px; }
+      .product-chip .count { font-size: 20px; }
+      .product-chip .name { font-size: 12px; }
+
+      /* ADS page */
+      .ads-page-title { font-size: 16px; }
+      .ads-summary-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .ads-sum-card { padding: 14px; border-radius: 8px; }
+      .ads-sum-card .val { font-size: 18px; }
+      .ads-form-row { grid-template-columns: 1fr; gap: 8px; }
+      .ads-form-row .btn-add-ads { margin-top: 2px; }
+      .ads-input-card { padding: 14px; border-radius: 10px; }
+      .ads-list-card { border-radius: 10px; }
+      .ads-table th { padding: 8px 12px; font-size: 10px; }
+      .ads-table td { padding: 10px 12px; font-size: 12px; }
+
+      /* Modal */
+      .modal { padding: 20px 16px; margin: 0 10px; border-radius: 10px; }
+      .modal h3 { font-size: 15px; }
+
+      /* Demo banner */
+      .demo-banner { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 12px; font-size: 12px; border-radius: 8px; }
+    }
+
+    @media (max-width: 400px) {
+      .kpi-value { font-size: 17px; }
+      .ads-summary-row { grid-template-columns: 1fr; }
+    }
+
+    /* ── Mobile order cards ── */
+    .mobile-cards { display: none; padding: 8px 12px 12px; }
+    .order-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .order-card-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    .order-card-name { font-weight: 700; font-size: 14px; color: var(--text); }
+    .order-card-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+    .order-card-price {
+      font-family: var(--font-head); font-size: 16px;
+      font-weight: 800; color: var(--accent);
+    }
+    .order-card-row {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+    }
+    .order-card-badge {
+      font-size: 11px; font-weight: 600; padding: 3px 8px;
+      border-radius: 4px; background: rgba(79,142,247,0.12);
+      color: var(--blue);
+    }
+    .order-card-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px; margin-top: 8px;
+    }
+    .order-card-stat { text-align: center; }
+    .order-card-stat .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 2px; }
+    .order-card-stat .val { font-size: 12px; font-weight: 700; }
+    .order-card-phone {
+      font-size: 12px; color: var(--muted); margin-top: 6px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .order-card-phone a { color: var(--blue); text-decoration: none; }
+    .order-card-addr {
+      font-size: 11px; color: var(--muted); margin-top: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .order-num {
+      position: absolute; top: 10px; right: 12px;
+      font-size: 10px; color: var(--muted); font-weight: 600;
+    }
+    .profit-positive { color: var(--green); }
+    .profit-negative { color: var(--red); }
+
+    /* ── Bottom Nav (mobile only) ── */
+    .bottom-nav { display: none; }
+    @media (max-width: 768px) {
+      .bottom-nav {
+        display: flex;
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        z-index: 200; height: 62px;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+      .bottom-nav-item {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 3px; cursor: pointer;
+        color: var(--muted); font-size: 10px; font-weight: 600;
+        transition: color 0.2s; padding: 8px 4px;
+        border: none; background: none;
+        font-family: var(--font-body);
+      }
+      .bottom-nav-item .bn-icon { font-size: 20px; line-height: 1; }
+      .bottom-nav-item.active { color: var(--accent); }
+      .bottom-nav-item.active .bn-icon { filter: drop-shadow(0 0 5px rgba(240,160,80,0.5)); }
     }
   </style>
 </head>
@@ -770,6 +916,22 @@
 
   </div><!-- end content -->
 </div><!-- end main -->
+
+<!-- ══ Bottom Nav (mobile) ══ -->
+<nav class="bottom-nav">
+  <button class="bottom-nav-item active" id="bn-dashboard" onclick="showPage('dashboard')">
+    <span class="bn-icon">📊</span>Dashboard
+  </button>
+  <button class="bottom-nav-item" id="bn-orders" onclick="showPage('dashboard');setTimeout(scrollToTable,100)">
+    <span class="bn-icon">📋</span>Đơn hàng
+  </button>
+  <button class="bottom-nav-item" id="bn-products" onclick="showPage('dashboard');setTimeout(scrollToProducts,100)">
+    <span class="bn-icon">📦</span>Sản phẩm
+  </button>
+  <button class="bottom-nav-item" id="bn-ads" onclick="showPage('ads')">
+    <span class="bn-icon">📣</span>ADS
+  </button>
+</nav>
 
 <!-- ══ Config Modal ══ -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
@@ -1205,26 +1367,27 @@ function renderTable(rows) {
     wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có đơn hàng nào</div>';
     return;
   }
-  let html = `<table>
+
+  // ── Desktop table ──
+  let tableHtml = `<div class="desktop-table"><table>
     <thead><tr>
-      <th>#</th>
-      <th>Họ tên</th>
-      <th>SĐT</th>
-      <th>Địa chỉ</th>
-      <th>Sản phẩm</th>
-      <th>Giá</th>
-      <th>COD</th>
-      <th>Phí ship</th>
-      <th>Lợi nhuận/đơn</th>
-      <th>Cân nặng</th>
-      <th>Thời gian</th>
+      <th>#</th><th>Họ tên</th><th>SĐT</th><th>Địa chỉ</th>
+      <th>Sản phẩm</th><th>Giá</th><th>COD</th><th>Phí ship</th>
+      <th>Lợi nhuận/đơn</th><th>Cân nặng</th><th>Thời gian</th>
     </tr></thead><tbody>`;
+
+  // ── Mobile cards ──
+  let cardsHtml = `<div class="mobile-cards">`;
+
   rows.forEach((r, i) => {
-    const price   = parsePrice(r.price);
-    const cod     = parsePrice(r.cod);
-    const ship    = parsePrice(r.ship);
-    const ln      = price - ship - cod;
-    html += `<tr>
+    const price = parsePrice(r.price);
+    const cod   = parsePrice(r.cod);
+    const ship  = parsePrice(r.ship);
+    const ln    = price - ship - cod;
+    const lnColor = ln > 0 ? 'profit-positive' : ln < 0 ? 'profit-negative' : '';
+
+    // Desktop row
+    tableHtml += `<tr>
       <td style="color:var(--muted)">${i+1}</td>
       <td class="td-name">${r.name||'—'}</td>
       <td>${r.phone||'—'}</td>
@@ -1237,9 +1400,43 @@ function renderTable(rows) {
       <td>${r.weight||'—'} kg</td>
       <td class="td-time">${r.time||'—'}</td>
     </tr>`;
+
+    // Mobile card
+    cardsHtml += `<div class="order-card">
+      <span class="order-num">#${i+1}</span>
+      <div class="order-card-top">
+        <div>
+          <div class="order-card-name">${r.name||'—'}</div>
+          <div class="order-card-time">${r.time||'—'}</div>
+        </div>
+        <div class="order-card-price">${price ? price.toLocaleString('vi-VN')+'đ' : '—'}</div>
+      </div>
+      <div class="order-card-row">
+        <span class="order-card-badge">${r.product||'—'}</span>
+        ${r.weight ? `<span style="font-size:11px;color:var(--muted);padding:3px 6px">⚖ ${r.weight} kg</span>` : ''}
+      </div>
+      <div class="order-card-grid">
+        <div class="order-card-stat">
+          <div class="lbl">COD</div>
+          <div class="val" style="color:var(--green)">${cod ? cod.toLocaleString('vi-VN')+'đ' : '—'}</div>
+        </div>
+        <div class="order-card-stat">
+          <div class="lbl">Phí ship</div>
+          <div class="val" style="color:var(--muted)">${ship ? ship.toLocaleString('vi-VN')+'đ' : '—'}</div>
+        </div>
+        <div class="order-card-stat">
+          <div class="lbl">Lợi nhuận</div>
+          <div class="val ${lnColor}">${ln ? ln.toLocaleString('vi-VN')+'đ' : '—'}</div>
+        </div>
+      </div>
+      <div class="order-card-phone">📞 <a href="tel:${r.phone}">${r.phone||'—'}</a></div>
+      ${r.address ? `<div class="order-card-addr">📍 ${r.address}</div>` : ''}
+    </div>`;
   });
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
+
+  tableHtml += '</tbody></table></div>';
+  cardsHtml += '</div>';
+  wrap.innerHTML = tableHtml + cardsHtml;
 }
 
 let sortOrder = 'desc'; // desc = mới nhất trước
@@ -1309,6 +1506,11 @@ function showPage(name) {
   const navMap = { dashboard: 'nav-dashboard', ads: 'nav-ads' };
   if (navMap[name]) document.getElementById(navMap[name]).classList.add('active');
   if (name === 'ads') renderAdsPage();
+
+  // Sync bottom nav
+  document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+  const bnMap = { dashboard: 'bn-dashboard', ads: 'bn-ads' };
+  if (bnMap[name]) document.getElementById(bnMap[name]).classList.add('active');
 }
 
 // ═══════════════════════════════════════
