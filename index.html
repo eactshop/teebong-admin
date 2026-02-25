@@ -1036,9 +1036,31 @@
         </div>
       </div>
 
+      <!-- FB Sync Card -->
+      <div class="ads-input-card" style="margin-bottom:16px">
+        <h3 style="display:flex;align-items:center;gap:8px">
+          <span style="background:#1877f2;border-radius:6px;padding:2px 8px;font-size:13px;color:#fff;font-family:var(--font-body)">f</span>
+          Đồng bộ từ Facebook Ads
+        </h3>
+        <div class="ads-form-row" style="align-items:flex-end">
+          <div class="ads-field" style="flex:1;min-width:120px">
+            <label>Từ ngày</label>
+            <input type="date" id="fb-date-from"/>
+          </div>
+          <div class="ads-field" style="flex:1;min-width:120px">
+            <label>Đến ngày</label>
+            <input type="date" id="fb-date-to"/>
+          </div>
+          <button class="btn-add-ads" id="fbSyncBtn" onclick="syncFbAds()" style="background:var(--blue);border-color:var(--blue);white-space:nowrap">
+            ⟳ Đồng bộ FB
+          </button>
+        </div>
+        <div id="fb-sync-status" style="margin-top:10px;font-size:12px;color:var(--muted);min-height:18px"></div>
+      </div>
+
       <!-- Input form -->
       <div class="ads-input-card">
-        <h3>➕ Thêm chi phí ADS</h3>
+        <h3>➕ Thêm chi phí ADS thủ công</h3>
         <div class="ads-form-row">
           <div class="ads-field">
             <label>Ngày</label>
@@ -1046,7 +1068,7 @@
           </div>
           <div class="ads-field">
             <label>Ghi chú (kênh, chiến dịch...)</label>
-            <input type="text" id="ads-note" placeholder="VD: Facebook - Camp tháng 2"/>
+            <input type="text" id="ads-note" placeholder="VD: Google Ads, TikTok..."/>
           </div>
           <div class="ads-field">
             <label>Số tiền (đ)</label>
@@ -1751,6 +1773,96 @@ function showPage(name) {
 // ═══════════════════════════════════════
 //  ADS MANAGEMENT
 // ═══════════════════════════════════════
+// ═══════════════════════════════════════
+//  FACEBOOK ADS API
+// ═══════════════════════════════════════
+const FB_TOKEN    = 'EAALOGruyzzABQZCr7FnCG6C4EaZC7QfKPpbFwRf4hZCkzSBAlUv6Wot3Ws55rmWMseoZBQo6oEDWnpbOppIT2jSDDrRBzyTZBaLUrlL5WyI9UBBc3HBOUKoWbuTkhKsgBEME12hvlVAHdtz3crcGAI2M2IlxB5f2FaZCCQ8RR3Ahi6ZANeTMZBJMePA87AGERkIz1AFLG6OKs5beKIrfz9aMxP5loi0ESxh6TwokJV0ZCwR1H8eODko8kOTmrwVXUo9xmzv8yLFgAu9JjqxRiZC1lT';
+const FB_ACCOUNT  = 'act_1119214509235245';
+const FB_API_VER  = 'v19.0';
+
+async function syncFbAds() {
+  const fromEl = document.getElementById('fb-date-from');
+  const toEl   = document.getElementById('fb-date-to');
+  const status = document.getElementById('fb-sync-status');
+  const btn    = document.getElementById('fbSyncBtn');
+
+  const from = fromEl.value;
+  const to   = toEl.value;
+
+  if (!from || !to) {
+    status.style.color = 'var(--red)';
+    status.textContent = '⚠ Vui lòng chọn khoảng ngày cần đồng bộ.';
+    return;
+  }
+  if (from > to) {
+    status.style.color = 'var(--red)';
+    status.textContent = '⚠ Ngày bắt đầu phải nhỏ hơn ngày kết thúc.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang tải...';
+  status.style.color = 'var(--muted)';
+  status.textContent = 'Đang kết nối Facebook Ads API...';
+
+  try {
+    const url = `https://graph.facebook.com/${FB_API_VER}/${FB_ACCOUNT}/insights`
+      + `?fields=date_start,spend`
+      + `&time_range=${encodeURIComponent(JSON.stringify({ since: from, until: to }))}`
+      + `&time_increment=1`
+      + `&access_token=${FB_TOKEN}`;
+
+    const res  = await fetch(url);
+    const json = await res.json();
+
+    if (json.error) {
+      status.style.color = 'var(--red)';
+      status.textContent = '❌ Lỗi FB API: ' + json.error.message;
+      return;
+    }
+
+    const fbData = json.data || [];
+    if (!fbData.length) {
+      status.style.color = 'var(--accent)';
+      status.textContent = '⚠ Không có dữ liệu chi tiêu trong khoảng thời gian này.';
+      return;
+    }
+
+    // Merge into local ADS data (overwrite FB entries for those dates)
+    let localData = getAdsData().filter(r => !r.fromFB || r.date < from || r.date > to);
+
+    let addedCount = 0;
+    fbData.forEach(d => {
+      const spend = Math.round(parseFloat(d.spend || 0));
+      if (spend <= 0) return;
+      localData.unshift({
+        id: 'fb_' + d.date_start,
+        date: d.date_start,
+        note: '📘 Facebook Ads',
+        amount: spend,
+        fromFB: true
+      });
+      addedCount++;
+    });
+
+    // Sort by date desc
+    localData.sort((a, b) => b.date.localeCompare(a.date));
+    saveAdsData(localData);
+    renderAdsPage();
+    updateAdsKpi();
+
+    status.style.color = 'var(--green)';
+    status.textContent = `✅ Đã đồng bộ ${addedCount} ngày từ Facebook Ads (${from} → ${to})`;
+
+  } catch (err) {
+    status.style.color = 'var(--red)';
+    status.textContent = '❌ Lỗi kết nối: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⟳ Đồng bộ FB';
+  }
+}
+
 const ADS_KEY = 'admin_ads_data';
 
 function getAdsData() {
@@ -1760,7 +1872,13 @@ function saveAdsData(data) { localStorage.setItem(ADS_KEY, JSON.stringify(data))
 
 // Set today's date as default
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('ads-date').value = new Date().toISOString().split('T')[0];
+  const todayVal = new Date().toISOString().split('T')[0];
+  document.getElementById('ads-date').value = todayVal;
+  // FB sync default: từ đầu tháng đến hôm nay
+  const now = new Date();
+  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  document.getElementById('fb-date-from').value = firstOfMonth;
+  document.getElementById('fb-date-to').value   = todayVal;
 });
 
 // Format amount input
@@ -1842,12 +1960,13 @@ function renderAdsPage() {
     const d = new Date(r.date + 'T00:00:00');
     const dateLabel = d.toLocaleDateString('vi-VN', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'});
     const isToday = r.date === todayStr;
+    const fbBadge = r.fromFB ? '<span style="margin-left:8px;font-size:10px;background:rgba(24,119,242,0.15);color:#4f8ef7;padding:2px 6px;border-radius:10px;font-weight:600">AUTO</span>' : '';
     html += `<tr>
       <td>
         <span style="color:var(--text);font-weight:600">${dateLabel}</span>
         ${isToday ? '<span style="margin-left:8px;font-size:10px;background:rgba(240,160,80,0.15);color:var(--accent);padding:2px 6px;border-radius:10px;font-weight:600">Hôm nay</span>' : ''}
       </td>
-      <td style="color:var(--muted)">${r.note}</td>
+      <td style="color:var(--muted)">${r.note}${fbBadge}</td>
       <td style="color:var(--red);font-family:var(--font-head);font-weight:700;font-size:15px">
         ${r.amount.toLocaleString('vi-VN')}đ
       </td>
