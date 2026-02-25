@@ -596,6 +596,36 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px 0 8px;
+    }
+    .pagination button {
+      padding: 7px 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: var(--font-body);
+    }
+    .pagination button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .pagination button:disabled { opacity: 0.3; cursor: default; }
+    .pagination .page-info {
+      font-size: 13px;
+      color: var(--muted);
+      min-width: 130px;
+      text-align: center;
+    }
+    .pagination .page-info span { color: var(--text); font-weight: 600; }
+
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -1204,9 +1234,27 @@ function getField(row, ...keys) {
   }
   return '';
 }
+function formatViDate(str) {
+  if (!str) return '';
+  str = String(str).trim();
+  // ISO format (2026-02-25T03:36:20.000Z) → chuyển sang giờ VN đọc được
+  if (str.includes('T') || str.includes('Z')) {
+    const d = new Date(str);
+    if (!isNaN(d)) {
+      return d.toLocaleString('vi-VN', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+      }).replace(',', '');
+    }
+  }
+  // Đã là DD/MM/YYYY ... → giữ nguyên
+  return str;
+}
+
 function normalize(row) {
+  const rawTime = getField(row, 'Thời gian','Thoi gian');
   return {
-    time:      getField(row, 'Thời gian','Thoi gian'),
+    time:      formatViDate(rawTime),
     name:      getField(row, 'Ho Tên','Họ tên','Ho Ten','Họ Tên','ho ten'),
     phone:     getField(row, 'SDT','SĐT','Sdt','sdt'),
     address:   getField(row, 'Địa Chỉ','Địa chỉ','Dia Chi','dia chi'),
@@ -1226,20 +1274,19 @@ function normalize(row) {
 function parseViDate(str) {
   if (!str) return new Date(0);
   str = String(str).trim();
-  // Format: "11:32:14 22/2/2026" hoặc "22/2/2026, 11:32:14" hoặc ISO
-  // Thử ISO trước
-  let d = new Date(str);
-  if (!isNaN(d)) return d;
-  // Format HH:mm:ss DD/MM/YYYY hoặc DD/MM/YYYY HH:mm:ss
+  // ISO format (có T hoặc Z) → parse trực tiếp
+  if (str.includes('T') || str.includes('Z')) {
+    const d = new Date(str);
+    if (!isNaN(d)) return d;
+  }
+  // Format DD/MM/YYYY HH:mm:ss hoặc DD/MM/YYYY, HH:mm:ss
   const m = str.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
   if (m) {
-    // m[1]=ngày hoặc tháng, cần xác định thứ tự
-    // Kiểu VN: DD/MM/YYYY
     const day = parseInt(m[1]), month = parseInt(m[2]), year = parseInt(m[3]);
     const timePart = str.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-    const h = timePart ? parseInt(timePart[1]) : 0;
+    const h  = timePart ? parseInt(timePart[1]) : 0;
     const mi = timePart ? parseInt(timePart[2]) : 0;
-    const s = timePart ? parseInt(timePart[3]||0) : 0;
+    const s  = timePart ? parseInt(timePart[3]||0) : 0;
     return new Date(year, month-1, day, h, mi, s);
   }
   return new Date(0);
@@ -1512,12 +1559,22 @@ function renderDoughnutChart(rows) {
 
 // ── Table ──
 function renderTable(rows) {
+  filteredRows = rows;
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPage() {
   const wrap = document.getElementById('tableWrap');
   if (!wrap) return;
-  if (!rows.length) {
+  if (!filteredRows.length) {
     wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có đơn hàng nào</div>';
     return;
   }
+
+  const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const rows = filteredRows.slice(start, start + PAGE_SIZE);
 
   // ── Desktop table ──
   let tableHtml = `<div class="desktop-table"><table>
@@ -1531,6 +1588,7 @@ function renderTable(rows) {
   let cardsHtml = `<div class="mobile-cards">`;
 
   rows.forEach((r, i) => {
+    const globalIndex = start + i + 1;
     const price = parsePrice(r.price);
     const cod   = parsePrice(r.cod);
     const ship  = parsePrice(r.ship);
@@ -1539,7 +1597,7 @@ function renderTable(rows) {
 
     // Desktop row
     tableHtml += `<tr>
-      <td style="color:var(--muted)">${i+1}</td>
+      <td style="color:var(--muted)">${globalIndex}</td>
       <td class="td-name">${r.name||'—'}</td>
       <td>${r.phone||'—'}</td>
       <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.address||''}">${r.address||'—'}</td>
@@ -1554,7 +1612,7 @@ function renderTable(rows) {
 
     // Mobile card
     cardsHtml += `<div class="order-card">
-      <span class="order-num">#${i+1}</span>
+      <span class="order-num">#${globalIndex}</span>
       <div class="order-card-top">
         <div>
           <div class="order-card-name">${r.name||'—'}</div>
@@ -1587,10 +1645,35 @@ function renderTable(rows) {
 
   tableHtml += '</tbody></table></div>';
   cardsHtml += '</div>';
-  wrap.innerHTML = tableHtml + cardsHtml;
+
+  // ── Pagination UI ──
+  let paginationHtml = '';
+  if (totalPages > 1) {
+    paginationHtml = `
+    <div class="pagination">
+      <button onclick="goToPage(1)" ${currentPage===1?'disabled':''}>«</button>
+      <button onclick="goToPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ Trước</button>
+      <div class="page-info">Trang <span>${currentPage}</span> / <span>${totalPages}</span> &nbsp;·&nbsp; ${filteredRows.length} đơn</div>
+      <button onclick="goToPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Sau ›</button>
+      <button onclick="goToPage(${totalPages})" ${currentPage===totalPages?'disabled':''}>»</button>
+    </div>`;
+  }
+
+  wrap.innerHTML = tableHtml + cardsHtml + paginationHtml;
+}
+
+function goToPage(page) {
+  const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+  currentPage = Math.max(1, Math.min(page, totalPages));
+  renderPage();
+  const orderTable = document.getElementById('orderTable');
+  if (orderTable) orderTable.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 let sortOrder = 'desc'; // desc = mới nhất trước
+let currentPage = 1;
+const PAGE_SIZE = 50;
+let filteredRows = [];
 
 function toggleSort() {
   sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
