@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — Quản lý đơn hàng</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     :root {
       --bg: #0d0f14;
@@ -42,7 +51,9 @@
       flex-direction: column;
       padding: 28px 0;
       position: fixed;
-      top: 0; left: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      bottom: 0;
       z-index: 100;
     }
 
@@ -55,19 +66,46 @@
       border-bottom: 1px solid var(--border);
       letter-spacing: -0.5px;
     }
-    .logo span { color: var(--text); }
 
-    .nav { padding: 20px 12px; flex: 1; }
+    .logo span {
+      color: var(--text);
+    }
+
+    .nav {
+      padding: 20px 12px;
+      flex: 1;
+    }
+
     .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 8px;
-      font-size: 13px; font-weight: 500; color: var(--muted);
-      cursor: pointer; transition: all 0.2s; margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 4px;
       text-decoration: none;
     }
-    .nav-item:hover { background: var(--surface2); color: var(--text); }
-    .nav-item.active { background: rgba(240,160,80,0.12); color: var(--accent); }
-    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: rgba(240, 160, 80, 0.12);
+      color: var(--accent);
+    }
+
+    .nav-item .icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
 
     .sidebar-footer {
       padding: 16px 24px;
@@ -94,7 +132,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
 
     .topbar-title {
@@ -104,19 +144,28 @@
       color: var(--text);
     }
 
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
     .config-btn {
       padding: 7px 14px;
-      background: rgba(240,160,80,0.12);
-      border: 1px solid rgba(240,160,80,0.3);
+      background: rgba(240, 160, 80, 0.12);
+      border: 1px solid rgba(240, 160, 80, 0.3);
       border-radius: 6px;
       color: var(--accent);
-      font-size: 12px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
       font-family: var(--font-body);
     }
-    .config-btn:hover { background: rgba(240,160,80,0.2); }
+
+    .config-btn:hover {
+      background: rgba(240, 160, 80, 0.2);
+    }
 
     .refresh-btn {
       padding: 7px 14px;
@@ -124,88 +173,164 @@
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--text);
-      font-size: 12px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
       font-family: var(--font-body);
-      display: flex; align-items: center; gap: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .refresh-btn.spinning .icon { animation: spin 0.8s linear infinite; display: inline-block; }
+
+    .refresh-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .refresh-btn.spinning .icon {
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
 
     .status-dot {
-      width: 8px; height: 8px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: var(--green);
       box-shadow: 0 0 6px var(--green);
     }
-    .status-dot.offline { background: var(--muted); box-shadow: none; }
+
+    .status-dot.offline {
+      background: var(--muted);
+      box-shadow: none;
+    }
 
     /* ── Content ── */
-    .content { padding: 28px 32px; flex: 1; }
+    .content {
+      padding: 28px 32px;
+      flex: 1;
+    }
 
     /* ── Config modal ── */
     .modal-overlay {
       display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7);
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
       z-index: 200;
-      align-items: center; justify-content: center;
+      align-items: center;
+      justify-content: center;
     }
-    .modal-overlay.show { display: flex; }
+
+    .modal-overlay.show {
+      display: flex;
+    }
 
     .modal {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 28px;
-      width: 500px; max-width: 90vw;
+      width: 500px;
+      max-width: 90vw;
       animation: fadeUp 0.3s ease;
     }
+
     .modal h3 {
       font-family: var(--font-head);
-      font-size: 17px; margin-bottom: 8px;
+      font-size: 17px;
+      margin-bottom: 8px;
     }
-    .modal p { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+
+    .modal p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
     .modal input {
       width: 100%;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 10px 14px;
-      font-family: monospace; font-size: 12px;
-      color: var(--text); outline: none;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
       transition: border-color 0.2s;
     }
-    .modal input:focus { border-color: var(--accent); }
-    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
-    .modal-actions button {
-      flex: 1; padding: 10px;
-      border-radius: 6px; border: none;
-      font-family: var(--font-body);
-      font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+
+    .modal input:focus {
+      border-color: var(--accent);
     }
-    .btn-save { background: var(--accent); color: #1a1000; }
-    .btn-save:hover { background: #ffb86c; }
-    .btn-cancel { background: var(--surface2); color: var(--muted); border: 1px solid var(--border) !important; }
-    .btn-cancel:hover { color: var(--text); }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-save {
+      background: var(--accent);
+      color: #1a1000;
+    }
+
+    .btn-save:hover {
+      background: #ffb86c;
+    }
+
+    .btn-cancel {
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border) !important;
+    }
+
+    .btn-cancel:hover {
+      color: var(--text);
+    }
 
     /* ── Demo mode banner ── */
     .demo-banner {
-      background: rgba(240,160,80,0.08);
-      border: 1px dashed rgba(240,160,80,0.4);
+      background: rgba(240, 160, 80, 0.08);
+      border: 1px dashed rgba(240, 160, 80, 0.4);
       border-radius: 8px;
       padding: 10px 16px;
-      font-size: 13px; color: var(--accent);
+      font-size: 13px;
+      color: var(--accent);
       margin-bottom: 24px;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .demo-banner.hidden { display: none; }
+
+    .demo-banner.hidden {
+      display: none;
+    }
 
     /* Hide mobile list on desktop */
-    .kpi-mobile-list { display: none; }
+    .kpi-mobile-list {
+      display: none;
+    }
+
     @media (max-width: 768px) {
-      .kpi-mobile-list { display: block; }
+      .kpi-mobile-list {
+        display: block;
+      }
     }
 
     /* ── KPI Cards ── */
@@ -215,12 +340,24 @@
       gap: 16px;
       margin-bottom: 24px;
     }
+
     /* Desktop: show as two separate grid rows */
     @media (min-width: 769px) {
-      .kpi-carousel-wrap { display: contents; }
-      .kpi-dots { display: none; }
-      .kpi-grid { display: grid; }
-      #kpiCarouselWrap .kpi-grid { grid-template-columns: repeat(4,1fr); }
+      .kpi-carousel-wrap {
+        display: contents;
+      }
+
+      .kpi-dots {
+        display: none;
+      }
+
+      .kpi-grid {
+        display: grid;
+      }
+
+      #kpiCarouselWrap .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
 
     /* KPI as a stacked list — one row per stat */
@@ -234,6 +371,7 @@
       border-radius: 14px;
       overflow: hidden;
     }
+
     .kpi-row {
       display: flex;
       align-items: center;
@@ -242,35 +380,90 @@
       border-bottom: 1px solid var(--border);
       transition: background 0.15s;
     }
-    .kpi-row:last-child { border-bottom: none; }
-    .kpi-row:hover { background: rgba(255,255,255,0.02); }
+
+    .kpi-row:last-child {
+      border-bottom: none;
+    }
+
+    .kpi-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
     .kpi-row-left {
-      display: flex; align-items: center; gap: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+
     .kpi-row-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
     }
-    .kpi-row-dot.orange { background: var(--accent); box-shadow: 0 0 6px rgba(240,160,80,0.5); }
-    .kpi-row-dot.green  { background: var(--green);  box-shadow: 0 0 6px rgba(62,207,142,0.5); }
-    .kpi-row-dot.blue   { background: var(--blue);   box-shadow: 0 0 6px rgba(79,142,247,0.5); }
-    .kpi-row-dot.red    { background: var(--red);    box-shadow: 0 0 6px rgba(240,90,90,0.5); }
+
+    .kpi-row-dot.orange {
+      background: var(--accent);
+      box-shadow: 0 0 6px rgba(240, 160, 80, 0.5);
+    }
+
+    .kpi-row-dot.green {
+      background: var(--green);
+      box-shadow: 0 0 6px rgba(62, 207, 142, 0.5);
+    }
+
+    .kpi-row-dot.blue {
+      background: var(--blue);
+      box-shadow: 0 0 6px rgba(79, 142, 247, 0.5);
+    }
+
+    .kpi-row-dot.red {
+      background: var(--red);
+      box-shadow: 0 0 6px rgba(240, 90, 90, 0.5);
+    }
+
     .kpi-row-label {
-      font-size: 13px; color: var(--muted); font-weight: 500;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
     }
+
     .kpi-row-sub {
-      font-size: 11px; color: var(--muted); opacity: 0.6; margin-top: 1px;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.6;
+      margin-top: 1px;
     }
-    .kpi-row-right { text-align: right; }
+
+    .kpi-row-right {
+      text-align: right;
+    }
+
     .kpi-row-value {
       font-family: var(--font-head);
-      font-size: 22px; font-weight: 800; color: var(--text); line-height: 1;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
     }
 
     @media (max-width: 768px) {
-      .kpi-list { border-radius: 10px; margin-bottom: 12px; }
-      .kpi-row { padding: 13px 14px; }
-      .kpi-row-value { font-size: 20px; }
-      .kpi-row-label { font-size: 12px; }
+      .kpi-list {
+        border-radius: 10px;
+        margin-bottom: 12px;
+      }
+
+      .kpi-row {
+        padding: 13px 14px;
+      }
+
+      .kpi-row-value {
+        font-size: 20px;
+      }
+
+      .kpi-row-label {
+        font-size: 12px;
+      }
     }
 
     .kpi-card {
@@ -282,38 +475,78 @@
       overflow: hidden;
       animation: fadeUp 0.5s ease both;
     }
+
     .kpi-card::after {
       content: '';
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       height: 2px;
     }
-    .kpi-card.orange::after { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-    .kpi-card.green::after  { background: var(--green); }
-    .kpi-card.blue::after   { background: var(--blue); }
-    .kpi-card.red::after    { background: var(--red); }
 
-    .kpi-card:nth-child(1) { animation-delay: 0.05s; }
-    .kpi-card:nth-child(2) { animation-delay: 0.1s; }
-    .kpi-card:nth-child(3) { animation-delay: 0.15s; }
-    .kpi-card:nth-child(4) { animation-delay: 0.2s; }
+    .kpi-card.orange::after {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .kpi-card.green::after {
+      background: var(--green);
+    }
+
+    .kpi-card.blue::after {
+      background: var(--blue);
+    }
+
+    .kpi-card.red::after {
+      background: var(--red);
+    }
+
+    .kpi-card:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .kpi-card:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .kpi-card:nth-child(3) {
+      animation-delay: 0.15s;
+    }
+
+    .kpi-card:nth-child(4) {
+      animation-delay: 0.2s;
+    }
 
     .kpi-label {
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
     }
+
     .kpi-value {
       font-family: var(--font-head);
-      font-size: 28px; font-weight: 800;
-      color: var(--text); line-height: 1;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
     }
+
     .kpi-sub {
-      font-size: 12px; color: var(--muted);
+      font-size: 12px;
+      color: var(--muted);
       margin-top: 6px;
     }
-    .kpi-sub .up   { color: var(--green); }
-    .kpi-sub .down { color: var(--red); }
+
+    .kpi-sub .up {
+      color: var(--green);
+    }
+
+    .kpi-sub .down {
+      color: var(--red);
+    }
 
     /* ── Charts row ── */
     .charts-row {
@@ -332,22 +565,32 @@
     }
 
     .card-header {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 20px;
     }
+
     .card-title {
       font-family: var(--font-head);
-      font-size: 14px; font-weight: 700;
+      font-size: 14px;
+      font-weight: 700;
       color: var(--text);
     }
+
     .card-badge {
-      font-size: 11px; font-weight: 600;
-      padding: 3px 8px; border-radius: 20px;
-      background: rgba(240,160,80,0.12);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(240, 160, 80, 0.12);
       color: var(--accent);
     }
 
-    .chart-wrap { position: relative; height: 220px; }
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+    }
 
     /* ── Table ── */
     .table-card {
@@ -359,72 +602,139 @@
     }
 
     .sort-btn {
-      display: flex; align-items: center; gap: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
       padding: 7px 12px;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 6px; color: var(--muted);
-      font-size: 12px; font-weight: 600; cursor: pointer;
-      font-family: var(--font-body); transition: all 0.2s;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.2s;
       white-space: nowrap;
     }
-    .sort-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .sort-btn.asc  { border-color: var(--blue); color: var(--blue); }
-    .sort-btn.desc { border-color: var(--accent); color: var(--accent); }
+
+    .sort-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .sort-btn.asc {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .sort-btn.desc {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
 
     .table-header {
       padding: 18px 22px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .search-box {
-      display: flex; align-items: center; gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 7px 12px;
       transition: border-color 0.2s;
     }
-    .search-box:focus-within { border-color: var(--accent); }
-    .search-box input {
-      background: none; border: none; outline: none;
-      font-family: var(--font-body); font-size: 13px;
-      color: var(--text); width: 200px;
-    }
-    .search-box input::placeholder { color: var(--muted); }
-    .search-icon { color: var(--muted); font-size: 14px; }
 
-    table { width: 100%; border-collapse: collapse; }
+    .search-box:focus-within {
+      border-color: var(--accent);
+    }
+
+    .search-box input {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text);
+      width: 200px;
+    }
+
+    .search-box input::placeholder {
+      color: var(--muted);
+    }
+
+    .search-icon {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
     thead th {
       padding: 11px 22px;
       text-align: left;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 1px; text-transform: uppercase;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       color: var(--muted);
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.02);
       border-bottom: 1px solid var(--border);
     }
+
     tbody tr {
       border-bottom: 1px solid var(--border);
       transition: background 0.15s;
     }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(255,255,255,0.025); }
-    tbody td {
-      padding: 13px 22px;
-      font-size: 13px; color: var(--text);
+
+    tbody tr:last-child {
+      border-bottom: none;
     }
 
-    .td-name { font-weight: 600; }
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    tbody td {
+      padding: 13px 22px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .td-name {
+      font-weight: 600;
+    }
+
     .td-product {
-      background: rgba(79,142,247,0.1);
+      background: rgba(79, 142, 247, 0.1);
       color: var(--blue);
-      padding: 3px 8px; border-radius: 4px;
-      font-size: 12px; font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
       display: inline-block;
     }
-    .td-price { font-weight: 700; color: var(--accent); font-family: var(--font-head); }
-    .td-time { color: var(--muted); font-size: 12px; }
+
+    .td-price {
+      font-weight: 700;
+      color: var(--accent);
+      font-family: var(--font-head);
+    }
+
+    .td-time {
+      color: var(--muted);
+      font-size: 12px;
+    }
 
     /* Empty state */
     .empty-state {
@@ -433,7 +743,11 @@
       color: var(--muted);
       font-size: 14px;
     }
-    .empty-state .icon { font-size: 36px; margin-bottom: 12px; }
+
+    .empty-state .icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
 
     /* ── Products grid ── */
     .products-row {
@@ -442,6 +756,7 @@
       gap: 12px;
       padding: 16px 22px;
     }
+
     .product-chip {
       background: var(--bg);
       border: 1px solid var(--border);
@@ -449,66 +764,136 @@
       padding: 14px;
       transition: border-color 0.2s;
     }
-    .product-chip:hover { border-color: var(--accent); }
-    .product-chip .name {
-      font-size: 13px; font-weight: 600;
-      color: var(--text); margin-bottom: 6px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+
+    .product-chip:hover {
+      border-color: var(--accent);
     }
+
+    .product-chip .name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .product-chip .count {
       font-family: var(--font-head);
-      font-size: 22px; font-weight: 800; color: var(--accent);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--accent);
     }
-    .product-chip .sub { font-size: 11px; color: var(--muted); }
+
+    .product-chip .sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
 
     /* ── Filter Bar ── */
     .filter-bar {
-      display: flex; align-items: center; gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 20px;
     }
+
     .filter-bar .filter-label {
-      font-size: 12px; color: var(--muted); font-weight: 500; margin-right: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-right: 4px;
     }
+
     .filter-btn {
       padding: 7px 16px;
       border-radius: 20px;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--muted);
-      font-size: 12px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
       font-family: var(--font-body);
     }
-    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     .filter-btn.active {
-      background: var(--accent); border-color: var(--accent);
+      background: var(--accent);
+      border-color: var(--accent);
       color: #1a0a00;
     }
-    .filter-divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
-    .filter-custom { display: flex; align-items: center; gap: 6px; }
-    .filter-custom input[type=date] {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 6px; padding: 6px 10px;
-      font-family: var(--font-body); font-size: 12px; color: var(--text);
-      outline: none; transition: border-color 0.2s;
+
+    .filter-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+      margin: 0 4px;
     }
-    .filter-custom input[type=date]:focus { border-color: var(--accent); }
-    .filter-custom input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
-    .filter-custom span { font-size: 12px; color: var(--muted); }
+
+    .filter-custom {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-custom input[type=date] {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .filter-custom input[type=date]:focus {
+      border-color: var(--accent);
+    }
+
+    .filter-custom input[type=date]::-webkit-calendar-picker-indicator {
+      filter: invert(0.5);
+    }
+
+    .filter-custom span {
+      font-size: 12px;
+      color: var(--muted);
+    }
 
     /* ── ADS Tab ── */
-    .page { display: none; }
-    .page.active { display: block; }
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
 
     .ads-page-header {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 24px;
     }
+
     .ads-page-title {
       font-family: var(--font-head);
-      font-size: 20px; font-weight: 800; color: var(--text);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
     }
-    .ads-page-title span { color: var(--red); }
+
+    .ads-page-title span {
+      color: var(--red);
+    }
 
     .ads-input-card {
       background: var(--surface);
@@ -517,168 +902,475 @@
       padding: 24px;
       margin-bottom: 24px;
     }
+
     .ads-input-card h3 {
-      font-family: var(--font-head); font-size: 14px; font-weight: 700;
-      color: var(--text); margin-bottom: 16px;
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
     }
+
     .ads-form-row {
-      display: grid; grid-template-columns: 160px 1fr 120px auto; gap: 10px; align-items: end;
+      display: grid;
+      grid-template-columns: 160px 1fr 120px auto;
+      gap: 10px;
+      align-items: end;
     }
-    .ads-field { display: flex; flex-direction: column; gap: 6px; }
+
+    .ads-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     .ads-field label {
-      font-size: 11px; font-weight: 600; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
     }
+
     .ads-field input {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      padding: 10px 12px; font-family: var(--font-body); font-size: 14px;
-      color: var(--text); outline: none; transition: border-color 0.2s;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
     }
-    .ads-field input:focus { border-color: var(--accent); }
-    .ads-field input[type=date]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+
+    .ads-field input:focus {
+      border-color: var(--accent);
+    }
+
+    .ads-field input[type=date]::-webkit-calendar-picker-indicator {
+      filter: invert(0.5);
+    }
 
     .btn-add-ads {
-      padding: 10px 20px; background: var(--red); color: #fff;
-      border: none; border-radius: 6px; font-family: var(--font-body);
-      font-size: 13px; font-weight: 700; cursor: pointer;
-      transition: background 0.2s; white-space: nowrap; align-self: end;
+      padding: 10px 20px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+      align-self: end;
     }
-    .btn-add-ads:hover { background: #ff7070; }
+
+    .btn-add-ads:hover {
+      background: #ff7070;
+    }
 
     .ads-summary-row {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
     }
+
     .ads-sum-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
     }
-    .ads-sum-card .label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-    .ads-sum-card .val { font-family: var(--font-head); font-size: 24px; font-weight: 800; }
+
+    .ads-sum-card .label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .ads-sum-card .val {
+      font-family: var(--font-head);
+      font-size: 24px;
+      font-weight: 800;
+    }
 
     .ads-list-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
     }
-    .ads-list-header {
-      padding: 16px 22px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .ads-list-header span { font-family: var(--font-head); font-size: 14px; font-weight: 700; }
-    .btn-clear-ads {
-      padding: 6px 12px; background: transparent;
-      border: 1px solid var(--border); border-radius: 6px;
-      color: var(--muted); font-size: 12px; cursor: pointer;
-      font-family: var(--font-body); transition: all 0.2s;
-    }
-    .btn-clear-ads:hover { border-color: var(--red); color: var(--red); }
 
-    .ads-table { width: 100%; border-collapse: collapse; }
+    .ads-list-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ads-list-header span {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .btn-clear-ads {
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.2s;
+    }
+
+    .btn-clear-ads:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .ads-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
     .ads-table th {
-      padding: 10px 22px; text-align: left;
-      font-size: 11px; font-weight: 600; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--muted);
-      background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+      padding: 10px 22px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border);
     }
-    .ads-table td { padding: 13px 22px; font-size: 13px; border-bottom: 1px solid var(--border); }
-    .ads-table tr:last-child td { border-bottom: none; }
-    .ads-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .ads-table td {
+      padding: 13px 22px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ads-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .ads-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
     .ads-del {
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-size: 15px; padding: 2px 6px;
-      border-radius: 4px; transition: all 0.2s;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 15px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.2s;
     }
-    .ads-del:hover { background: rgba(240,90,90,0.15); color: var(--red); }
+
+    .ads-del:hover {
+      background: rgba(240, 90, 90, 0.15);
+      color: var(--red);
+    }
 
     /* FB Accounts */
     .fb-accounts-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px 24px; margin-bottom: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
     }
+
     .fb-accounts-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
     }
+
     .fb-accounts-title {
-      font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--text);
-      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .fb-accounts-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .fb-accounts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .fb-account-item {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 14px; transition: border-color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      transition: border-color 0.2s;
     }
-    .fb-account-item.selected { border-color: #1877f2; background: rgba(24,119,242,0.06); }
-    .fb-account-radio { accent-color: #1877f2; width: 15px; height: 15px; cursor: pointer; }
-    .fb-account-info { flex: 1; min-width: 0; }
-    .fb-account-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .fb-account-id { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 2px; }
-    .fb-account-token-preview { font-size: 10px; color: var(--muted); font-family: monospace; margin-top: 1px; opacity: 0.7; }
+
+    .fb-account-item.selected {
+      border-color: #1877f2;
+      background: rgba(24, 119, 242, 0.06);
+    }
+
+    .fb-account-radio {
+      accent-color: #1877f2;
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+
+    .fb-account-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fb-account-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fb-account-id {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: monospace;
+      margin-top: 2px;
+    }
+
+    .fb-account-token-preview {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: monospace;
+      margin-top: 1px;
+      opacity: 0.7;
+    }
+
     .fb-account-del {
-      background: none; border: none; color: var(--muted);
-      cursor: pointer; font-size: 14px; padding: 3px 7px;
-      border-radius: 4px; transition: all 0.2s; flex-shrink: 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 3px 7px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      flex-shrink: 0;
     }
-    .fb-account-del:hover { background: rgba(240,90,90,0.15); color: var(--red); }
+
+    .fb-account-del:hover {
+      background: rgba(240, 90, 90, 0.15);
+      color: var(--red);
+    }
+
     .btn-add-fb-account {
-      padding: 7px 14px; background: rgba(24,119,242,0.12);
-      border: 1px solid rgba(24,119,242,0.35); border-radius: 6px;
-      color: #4f8ef7; font-size: 12px; font-weight: 600;
-      cursor: pointer; font-family: var(--font-body); transition: all 0.2s;
+      padding: 7px 14px;
+      background: rgba(24, 119, 242, 0.12);
+      border: 1px solid rgba(24, 119, 242, 0.35);
+      border-radius: 6px;
+      color: #4f8ef7;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.2s;
     }
-    .btn-add-fb-account:hover { background: rgba(24,119,242,0.2); }
-    .fb-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 14px 0; }
+
+    .btn-add-fb-account:hover {
+      background: rgba(24, 119, 242, 0.2);
+    }
+
+    .fb-empty {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      padding: 14px 0;
+    }
 
     /* FB Add Account Modal */
     .fb-modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.75); z-index: 300;
-      align-items: center; justify-content: center;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
     }
-    .fb-modal-overlay.show { display: flex; }
+
+    .fb-modal-overlay.show {
+      display: flex;
+    }
+
     .fb-modal {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 14px; padding: 28px; width: 480px; max-width: 92vw;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      width: 480px;
+      max-width: 92vw;
       animation: fadeUp 0.3s ease;
     }
-    .fb-modal h3 { font-family: var(--font-head); font-size: 16px; margin-bottom: 6px; }
-    .fb-modal p  { font-size: 12px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
-    .fb-modal-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-    .fb-modal-field label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+
+    .fb-modal h3 {
+      font-family: var(--font-head);
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .fb-modal p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.6;
+    }
+
+    .fb-modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .fb-modal-field label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
     .fb-modal-field input {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      padding: 10px 12px; font-family: var(--font-body); font-size: 13px;
-      color: var(--text); outline: none; transition: border-color 0.2s;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
     }
-    .fb-modal-field input:focus { border-color: #1877f2; }
-    .fb-modal-field input::placeholder { color: var(--muted); font-size: 12px; }
+
+    .fb-modal-field input:focus {
+      border-color: #1877f2;
+    }
+
+    .fb-modal-field input::placeholder {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .fb-modal-note {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      padding: 10px 14px; font-size: 11px; color: var(--muted); margin-bottom: 16px; line-height: 1.7;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 16px;
+      line-height: 1.7;
     }
-    .fb-modal-note b { color: var(--accent); }
-    .fb-modal-actions { display: flex; gap: 10px; }
+
+    .fb-modal-note b {
+      color: var(--accent);
+    }
+
+    .fb-modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
     .fb-modal-actions button {
-      flex: 1; padding: 10px; border-radius: 6px; border: none;
-      font-family: var(--font-body); font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-fb-save { background: #1877f2; color: #fff; }
-    .btn-fb-save:hover { background: #1565c0; }
-    .btn-fb-cancel { background: var(--surface2); color: var(--muted); border: 1px solid var(--border) !important; }
-    .btn-fb-cancel:hover { color: var(--text); }
+
+    .btn-fb-save {
+      background: #1877f2;
+      color: #fff;
+    }
+
+    .btn-fb-save:hover {
+      background: #1565c0;
+    }
+
+    .btn-fb-cancel {
+      background: var(--surface2);
+      color: var(--muted);
+      border: 1px solid var(--border) !important;
+    }
+
+    .btn-fb-cancel:hover {
+      color: var(--text);
+    }
+
     .fb-select {
-      background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-      padding: 9px 12px; font-family: var(--font-body); font-size: 13px;
-      color: var(--text); outline: none; width: 100%; transition: border-color 0.2s; cursor: pointer;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 9px 12px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+      cursor: pointer;
     }
-    .fb-select:focus { border-color: #1877f2; }
+
+    .fb-select:focus {
+      border-color: #1877f2;
+    }
 
     /* Animations */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* ── Pagination ── */
     .pagination {
@@ -688,6 +1380,7 @@
       gap: 8px;
       padding: 20px 0 8px;
     }
+
     .pagination button {
       padding: 7px 14px;
       background: var(--surface2);
@@ -700,40 +1393,96 @@
       transition: all 0.2s;
       font-family: var(--font-body);
     }
-    .pagination button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
-    .pagination button:disabled { opacity: 0.3; cursor: default; }
+
+    .pagination button:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .pagination button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
     .pagination .page-info {
       font-size: 13px;
       color: var(--muted);
       min-width: 130px;
       text-align: center;
     }
-    .pagination .page-info span { color: var(--text); font-weight: 600; }
+
+    .pagination .page-info span {
+      color: var(--text);
+      font-weight: 600;
+    }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
 
     @media (max-width: 1100px) {
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .charts-row { grid-template-columns: 1fr; }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ══ MOBILE RESPONSIVE ══ */
     @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .main { margin-left: 0; padding-bottom: 72px; }
-      .content { padding: 12px 12px 20px; }
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        margin-left: 0;
+        padding-bottom: 72px;
+      }
+
+      .content {
+        padding: 12px 12px 20px;
+      }
 
       /* Topbar */
-      .topbar { padding: 0 12px; height: 50px; gap: 8px; }
-      .topbar-title { font-size: 13px; font-weight: 700; }
-      .config-btn { font-size: 11px; padding: 5px 9px; }
-      .refresh-btn { padding: 6px 10px; font-size: 12px; }
+      .topbar {
+        padding: 0 12px;
+        height: 50px;
+        gap: 8px;
+      }
+
+      .topbar-title {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .config-btn {
+        font-size: 11px;
+        padding: 5px 9px;
+      }
+
+      .refresh-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
 
       /* KPI — list on mobile */
-      #kpiGrid1, #kpiGrid2 { display: none !important; }
+      #kpiGrid1,
+      #kpiGrid2 {
+        display: none !important;
+      }
+
       .kpi-mobile-list {
         background: var(--surface);
         border: 1px solid var(--border);
@@ -741,88 +1490,265 @@
         overflow: hidden;
         margin-bottom: 12px;
       }
+
       .kpi-mobile-row {
-        display: flex; align-items: center;
+        display: flex;
+        align-items: center;
         justify-content: space-between;
         padding: 13px 16px;
         border-bottom: 1px solid var(--border);
       }
-      .kpi-mobile-row:last-child { border-bottom: none; }
-      .kpi-mobile-left { display: flex; align-items: center; gap: 10px; }
-      .kpi-mobile-dot {
-        width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+
+      .kpi-mobile-row:last-child {
+        border-bottom: none;
       }
-      .kpi-mobile-dot.orange { background: var(--accent); }
-      .kpi-mobile-dot.green  { background: var(--green); }
-      .kpi-mobile-dot.blue   { background: var(--blue); }
-      .kpi-mobile-dot.red    { background: var(--red); }
-      .kpi-mobile-label { font-size: 13px; color: var(--muted); font-weight: 500; }
-      .kpi-mobile-sub { font-size: 10px; color: var(--muted); opacity: 0.6; margin-top: 1px; }
+
+      .kpi-mobile-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .kpi-mobile-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .kpi-mobile-dot.orange {
+        background: var(--accent);
+      }
+
+      .kpi-mobile-dot.green {
+        background: var(--green);
+      }
+
+      .kpi-mobile-dot.blue {
+        background: var(--blue);
+      }
+
+      .kpi-mobile-dot.red {
+        background: var(--red);
+      }
+
+      .kpi-mobile-label {
+        font-size: 13px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .kpi-mobile-sub {
+        font-size: 10px;
+        color: var(--muted);
+        opacity: 0.6;
+        margin-top: 1px;
+      }
+
       .kpi-mobile-val {
         font-family: var(--font-head);
-        font-size: 18px; font-weight: 800; color: var(--text);
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text);
         text-align: right;
       }
 
       /* Filter bar */
-      .filter-bar { flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-      .filter-label { display: none; }
-      .filter-divider { display: none; }
-      .filter-btn { padding: 6px 13px; font-size: 11px; flex: 1; text-align: center; }
-      .filter-custom { width: 100%; gap: 6px; }
-      .filter-custom input[type=date] { flex: 1; font-size: 12px; padding: 7px 8px; }
+      .filter-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .filter-label {
+        display: none;
+      }
+
+      .filter-divider {
+        display: none;
+      }
+
+      .filter-btn {
+        padding: 6px 13px;
+        font-size: 11px;
+        flex: 1;
+        text-align: center;
+      }
+
+      .filter-custom {
+        width: 100%;
+        gap: 6px;
+      }
+
+      .filter-custom input[type=date] {
+        flex: 1;
+        font-size: 12px;
+        padding: 7px 8px;
+      }
 
       /* Charts */
-      .charts-row { grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
-      .chart-card { padding: 14px 12px; border-radius: 10px; }
-      .chart-wrap { height: 160px; }
-      .card-title { font-size: 13px; }
+      .charts-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .chart-card {
+        padding: 14px 12px;
+        border-radius: 10px;
+      }
+
+      .chart-wrap {
+        height: 160px;
+      }
+
+      .card-title {
+        font-size: 13px;
+      }
 
       /* Table card — convert to mobile cards */
-      .table-card { border-radius: 10px; }
-      .table-header { padding: 12px 14px; flex-wrap: wrap; gap: 8px; }
-      .table-header > div:last-child { width: 100%; }
-      .search-box { width: 100%; }
-      .search-box input { width: 100%; font-size: 13px; }
-      .sort-btn { font-size: 11px; padding: 6px 10px; }
+      .table-card {
+        border-radius: 10px;
+      }
+
+      .table-header {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .table-header>div:last-child {
+        width: 100%;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .search-box input {
+        width: 100%;
+        font-size: 13px;
+      }
+
+      .sort-btn {
+        font-size: 11px;
+        padding: 6px 10px;
+      }
 
       /* Hide desktop table, show mobile cards */
-      .desktop-table { display: none !important; }
-      .mobile-cards { display: block !important; }
+      .desktop-table {
+        display: none !important;
+      }
+
+      .mobile-cards {
+        display: block !important;
+      }
 
       /* Products */
-      .products-row { grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
-      .product-chip { padding: 12px 10px; border-radius: 8px; }
-      .product-chip .count { font-size: 20px; }
-      .product-chip .name { font-size: 12px; }
+      .products-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 10px;
+      }
+
+      .product-chip {
+        padding: 12px 10px;
+        border-radius: 8px;
+      }
+
+      .product-chip .count {
+        font-size: 20px;
+      }
+
+      .product-chip .name {
+        font-size: 12px;
+      }
 
       /* ADS page */
-      .ads-page-title { font-size: 16px; }
-      .ads-summary-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .ads-sum-card { padding: 14px; border-radius: 8px; }
-      .ads-sum-card .val { font-size: 18px; }
-      .ads-form-row { grid-template-columns: 1fr; gap: 8px; }
-      .ads-form-row .btn-add-ads { margin-top: 2px; }
-      .ads-input-card { padding: 14px; border-radius: 10px; }
-      .ads-list-card { border-radius: 10px; }
-      .ads-table th { padding: 8px 12px; font-size: 10px; }
-      .ads-table td { padding: 10px 12px; font-size: 12px; }
+      .ads-page-title {
+        font-size: 16px;
+      }
+
+      .ads-summary-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .ads-sum-card {
+        padding: 14px;
+        border-radius: 8px;
+      }
+
+      .ads-sum-card .val {
+        font-size: 18px;
+      }
+
+      .ads-form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .ads-form-row .btn-add-ads {
+        margin-top: 2px;
+      }
+
+      .ads-input-card {
+        padding: 14px;
+        border-radius: 10px;
+      }
+
+      .ads-list-card {
+        border-radius: 10px;
+      }
+
+      .ads-table th {
+        padding: 8px 12px;
+        font-size: 10px;
+      }
+
+      .ads-table td {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
 
       /* Modal */
-      .modal { padding: 20px 16px; margin: 0 10px; border-radius: 10px; }
-      .modal h3 { font-size: 15px; }
+      .modal {
+        padding: 20px 16px;
+        margin: 0 10px;
+        border-radius: 10px;
+      }
+
+      .modal h3 {
+        font-size: 15px;
+      }
 
       /* Demo banner */
-      .demo-banner { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 12px; font-size: 12px; border-radius: 8px; }
+      .demo-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 12px;
+        font-size: 12px;
+        border-radius: 8px;
+      }
     }
 
     @media (max-width: 400px) {
-      .kpi-value { font-size: 17px; }
-      .ads-summary-row { grid-template-columns: 1fr; }
+      .kpi-value {
+        font-size: 17px;
+      }
+
+      .ads-summary-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ── Mobile order cards ── */
-    .mobile-cards { display: none; padding: 8px 12px 12px; }
+    .mobile-cards {
+      display: none;
+      padding: 8px 12px 12px;
+    }
+
     .order-card {
       background: var(--bg);
       border: 1px solid var(--border);
@@ -831,428 +1757,580 @@
       margin-bottom: 8px;
       position: relative;
     }
+
     .order-card-top {
-      display: flex; justify-content: space-between; align-items: flex-start;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       margin-bottom: 10px;
     }
-    .order-card-name { font-weight: 700; font-size: 14px; color: var(--text); }
-    .order-card-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .order-card-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .order-card-time {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
     .order-card-price {
-      font-family: var(--font-head); font-size: 16px;
-      font-weight: 800; color: var(--accent);
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
     }
+
     .order-card-row {
-      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
     }
+
     .order-card-badge {
-      font-size: 11px; font-weight: 600; padding: 3px 8px;
-      border-radius: 4px; background: rgba(79,142,247,0.12);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(79, 142, 247, 0.12);
       color: var(--blue);
     }
+
     .order-card-grid {
-      display: grid; grid-template-columns: 1fr 1fr 1fr;
-      gap: 6px; margin-top: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
     }
-    .order-card-stat { text-align: center; }
-    .order-card-stat .lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 2px; }
-    .order-card-stat .val { font-size: 12px; font-weight: 700; }
+
+    .order-card-stat {
+      text-align: center;
+    }
+
+    .order-card-stat .lbl {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .order-card-stat .val {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
     .order-card-phone {
-      font-size: 12px; color: var(--muted); margin-top: 6px;
-      display: flex; align-items: center; gap: 4px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
-    .order-card-phone a { color: var(--blue); text-decoration: none; }
+
+    .order-card-phone a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
     .order-card-addr {
-      font-size: 11px; color: var(--muted); margin-top: 4px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
     .order-num {
-      position: absolute; top: 10px; right: 12px;
-      font-size: 10px; color: var(--muted); font-weight: 600;
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
     }
-    .profit-positive { color: var(--green); }
-    .profit-negative { color: var(--red); }
+
+    .profit-positive {
+      color: var(--green);
+    }
+
+    .profit-negative {
+      color: var(--red);
+    }
 
     /* ── Bottom Nav (mobile only) ── */
-    .bottom-nav { display: none; }
+    .bottom-nav {
+      display: none;
+    }
+
     @media (max-width: 768px) {
       .bottom-nav {
         display: flex;
-        position: fixed; bottom: 0; left: 0; right: 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
         background: var(--surface);
         border-top: 1px solid var(--border);
-        z-index: 200; height: 62px;
+        z-index: 200;
+        height: 62px;
         padding-bottom: env(safe-area-inset-bottom);
       }
+
       .bottom-nav-item {
-        flex: 1; display: flex; flex-direction: column;
-        align-items: center; justify-content: center;
-        gap: 3px; cursor: pointer;
-        color: var(--muted); font-size: 10px; font-weight: 600;
-        transition: color 0.2s; padding: 8px 4px;
-        border: none; background: none;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        cursor: pointer;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 600;
+        transition: color 0.2s;
+        padding: 8px 4px;
+        border: none;
+        background: none;
         font-family: var(--font-body);
       }
-      .bottom-nav-item .bn-icon { font-size: 20px; line-height: 1; }
-      .bottom-nav-item.active { color: var(--accent); }
-      .bottom-nav-item.active .bn-icon { filter: drop-shadow(0 0 5px rgba(240,160,80,0.5)); }
+
+      .bottom-nav-item .bn-icon {
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      .bottom-nav-item.active {
+        color: var(--accent);
+      }
+
+      .bottom-nav-item.active .bn-icon {
+        filter: drop-shadow(0 0 5px rgba(240, 160, 80, 0.5));
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- ══ Sidebar ══ -->
-<aside class="sidebar">
-  <div class="logo">ORDER<span>ADMIN</span></div>
-  <nav class="nav">
-    <a class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
-      <span class="icon">📊</span> Dashboard
-    </a>
-    <a class="nav-item" onclick="showPage('dashboard'); setTimeout(scrollToTable,100)">
-      <span class="icon">📋</span> Danh sách đơn
-    </a>
-    <a class="nav-item" onclick="showPage('dashboard'); setTimeout(scrollToProducts,100)">
-      <span class="icon">📦</span> Sản phẩm
-    </a>
-    <a class="nav-item" id="nav-ads" onclick="showPage('ads')">
-      <span class="icon">📣</span> Chi phí ADS
-    </a>
+  <!-- ══ Sidebar ══ -->
+  <aside class="sidebar">
+    <div class="logo">ORDER<span>ADMIN</span></div>
+    <nav class="nav">
+      <a class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard')">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      <a class="nav-item" onclick="showPage('dashboard'); setTimeout(scrollToTable,100)">
+        <span class="icon">📋</span> Danh sách đơn
+      </a>
+      <a class="nav-item" onclick="showPage('dashboard'); setTimeout(scrollToProducts,100)">
+        <span class="icon">📦</span> Sản phẩm
+      </a>
+      <a class="nav-item" id="nav-ads" onclick="showPage('ads')">
+        <span class="icon">📣</span> Chi phí ADS
+      </a>
+    </nav>
+    <div class="sidebar-footer">v1.0 · Google Sheets</div>
+  </aside>
+
+  <!-- ══ Main ══ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title">Báo cáo tổng hợp đơn hàng</div>
+      <div class="topbar-right">
+        <div class="status-dot" id="statusDot" title="Trạng thái kết nối"></div>
+        <button class="refresh-btn" onclick="loadData()">
+          <span class="icon" id="refreshIcon">↻</span> Làm mới
+        </button>
+        <button class="config-btn" onclick="openModal()">⚙ Cấu hình Sheet URL</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ══ DASHBOARD PAGE ══ -->
+      <div class="page active" id="page-dashboard">
+
+        <!-- Demo banner -->
+        <div class="demo-banner" id="demoBanner">
+          <span>⚡ Đang hiển thị <strong>dữ liệu demo</strong> — Cấu hình Sheet URL để xem dữ liệu thật</span>
+          <button class="config-btn" onclick="openModal()" style="font-size:11px; padding:5px 10px;">Kết nối
+            ngay</button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <span class="filter-label">Xem theo:</span>
+          <button class="filter-btn active" onclick="setFilter('today')">Hôm nay</button>
+          <button class="filter-btn" onclick="setFilter('week')">7 ngày</button>
+          <button class="filter-btn" onclick="setFilter('month')">Tháng này</button>
+          <button class="filter-btn" onclick="setFilter('all')">Tất cả</button>
+          <div class="filter-divider"></div>
+          <div class="filter-custom">
+            <input type="date" id="filter-from" onchange="setFilter('custom')" />
+            <span>→</span>
+            <input type="date" id="filter-to" onchange="setFilter('custom')" />
+          </div>
+        </div>
+
+        <!-- KPI Cards row 1 (desktop grid) -->
+        <div class="kpi-grid" id="kpiGrid1">
+          <div class="kpi-card orange">
+            <div class="kpi-label">Tổng đơn hàng</div>
+            <div class="kpi-value" id="kpi-total">—</div>
+            <div class="kpi-sub" id="kpi-total-sub">đang tải...</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Doanh thu</div>
+            <div class="kpi-value" id="kpi-revenue">—</div>
+            <div class="kpi-sub" id="kpi-revenue-sub">đang tải...</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">TB mỗi đơn</div>
+            <div class="kpi-value" id="kpi-avg">—</div>
+            <div class="kpi-sub">Giá trị trung bình</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">Tổng cân nặng</div>
+            <div class="kpi-value" id="kpi-weight">—</div>
+            <div class="kpi-sub">kg hàng đã xử lý</div>
+          </div>
+        </div>
+
+        <!-- KPI Cards row 2 (desktop grid) -->
+        <div class="kpi-grid" id="kpiGrid2" style="margin-bottom:24px;">
+          <div class="kpi-card green">
+            <div class="kpi-label">💰 Lãi Tổng</div>
+            <div class="kpi-value" id="kpi-lai-tong">—</div>
+            <div class="kpi-sub" id="kpi-lai-tong-sub">Tổng lợi nhuận</div>
+          </div>
+          <div class="kpi-card orange">
+            <div class="kpi-label" id="kpi-lai-ngay-label">📈 Lãi Ngày</div>
+            <div class="kpi-value" id="kpi-lai-ngay">—</div>
+            <div class="kpi-sub">Lợi nhuận hôm nay</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">📣 Chi phí ADS</div>
+            <div class="kpi-value" id="kpi-ads">—</div>
+            <div class="kpi-sub" id="kpi-ads-sub">Tổng quảng cáo</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">💵 Lợi nhuận/đơn TB</div>
+            <div class="kpi-value" id="kpi-loi-nhuan-avg">—</div>
+            <div class="kpi-sub">Trung bình mỗi đơn</div>
+          </div>
+        </div>
+
+        <!-- KPI Mobile List (chỉ hiện trên điện thoại) -->
+        <div class="kpi-mobile-list">
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot orange"></div>
+              <div>
+                <div class="kpi-mobile-label">Tổng đơn hàng</div>
+                <div class="kpi-mobile-sub" id="m-kpi-total-sub"></div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-total">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot green"></div>
+              <div>
+                <div class="kpi-mobile-label">Doanh thu</div>
+                <div class="kpi-mobile-sub" id="m-kpi-revenue-sub"></div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-revenue">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot blue"></div>
+              <div>
+                <div class="kpi-mobile-label">TB mỗi đơn</div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-avg">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot red"></div>
+              <div>
+                <div class="kpi-mobile-label">Tổng cân nặng</div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-weight">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot green"></div>
+              <div>
+                <div class="kpi-mobile-label">💰 Lãi Tổng</div>
+                <div class="kpi-mobile-sub" id="m-kpi-lai-tong-sub"></div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-lai-tong" style="color:var(--green)">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot orange"></div>
+              <div>
+                <div class="kpi-mobile-label" id="m-kpi-lai-ngay-label">📈 Lãi Ngày</div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-lai-ngay">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot red"></div>
+              <div>
+                <div class="kpi-mobile-label">📣 Chi phí ADS</div>
+                <div class="kpi-mobile-sub" id="m-kpi-ads-sub"></div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-ads">—</div>
+          </div>
+          <div class="kpi-mobile-row">
+            <div class="kpi-mobile-left">
+              <div class="kpi-mobile-dot blue"></div>
+              <div>
+                <div class="kpi-mobile-label">💵 Lợi nhuận/đơn TB</div>
+              </div>
+            </div>
+            <div class="kpi-mobile-val" id="m-kpi-loi-nhuan-avg">—</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="card-header">
+              <div class="card-title">Đơn hàng theo ngày</div>
+              <span class="card-badge" id="chart-period">7 ngày gần nhất</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chartLine"></canvas>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="card-header">
+              <div class="card-title">Doanh thu theo sản phẩm</div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chartDoughnut"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Table -->
+        <div class="table-card" id="orderTable" style="margin-bottom:24px;">
+          <div class="table-header">
+            <div class="card-title">📋 Danh sách đơn hàng</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <button class="sort-btn desc" id="sortBtn" onclick="toggleSort()">
+                <span id="sortIcon">↓</span> <span id="sortLabel">Mới nhất</span>
+              </button>
+              <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Tìm theo tên, SĐT, sản phẩm..."
+                  oninput="filterTable()" />
+              </div>
+            </div>
+          </div>
+          <div id="tableWrap">
+            <div class="empty-state">
+              <div class="icon">⏳</div>Đang tải dữ liệu...
+            </div>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div class="table-card" id="productSection">
+          <div class="table-header">
+            <div class="card-title">📦 Thống kê sản phẩm bán chạy</div>
+          </div>
+          <div class="products-row" id="productsGrid">
+            <div class="empty-state" style="grid-column:1/-1">
+              <div class="icon">⏳</div>Đang tải...
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end page-dashboard -->
+
+      <!-- ══ ADS PAGE ══ -->
+      <div class="page" id="page-ads">
+        <div class="ads-page-header">
+          <div class="ads-page-title">📣 Chi phí <span>ADS</span></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="ads-summary-row">
+          <div class="ads-sum-card">
+            <div class="label">Tổng ADS đã chi</div>
+            <div class="val" id="ads-sum-total" style="color:var(--red)">0đ</div>
+          </div>
+          <div class="ads-sum-card">
+            <div class="label">ADS hôm nay</div>
+            <div class="val" id="ads-sum-today" style="color:var(--accent)">0đ</div>
+          </div>
+          <div class="ads-sum-card">
+            <div class="label">ADS tháng này</div>
+            <div class="val" id="ads-sum-month" style="color:var(--blue)">0đ</div>
+          </div>
+        </div>
+
+        <!-- FB Accounts Management -->
+        <div class="fb-accounts-card">
+          <div class="fb-accounts-header">
+            <div class="fb-accounts-title">
+              <span
+                style="background:#1877f2;border-radius:6px;padding:2px 8px;font-size:13px;color:#fff;font-family:var(--font-body)">f</span>
+              Tài khoản quảng cáo Facebook
+            </div>
+            <button class="btn-add-fb-account" onclick="openFbAccountModal()">+ Thêm tài khoản</button>
+          </div>
+          <div class="fb-accounts-list" id="fbAccountsList">
+            <div class="fb-empty">Chưa có tài khoản nào. Nhấn "+ Thêm tài khoản" để bắt đầu.</div>
+          </div>
+        </div>
+
+        <!-- FB Sync Card -->
+        <div class="ads-input-card" style="margin-bottom:16px">
+          <h3 style="display:flex;align-items:center;gap:8px">
+            <span
+              style="background:#1877f2;border-radius:6px;padding:2px 8px;font-size:13px;color:#fff;font-family:var(--font-body)">f</span>
+            Đồng bộ từ Facebook Ads
+          </h3>
+          <div style="display:grid;grid-template-columns:1fr 140px 140px auto;gap:10px;align-items:end">
+            <div class="ads-field">
+              <label>Tài khoản</label>
+              <select class="fb-select" id="fb-account-select">
+                <option value="">— Chọn tài khoản —</option>
+              </select>
+            </div>
+            <div class="ads-field">
+              <label>Từ ngày</label>
+              <input type="date" id="fb-date-from" />
+            </div>
+            <div class="ads-field">
+              <label>Đến ngày</label>
+              <input type="date" id="fb-date-to" />
+            </div>
+            <button class="btn-add-ads" id="fbSyncBtn" onclick="syncFbAds()"
+              style="background:var(--blue);white-space:nowrap">
+              ⟳ Đồng bộ FB
+            </button>
+          </div>
+          <div id="fb-sync-status" style="margin-top:10px;font-size:12px;color:var(--muted);min-height:18px"></div>
+        </div>
+
+        <!-- Input form -->
+        <div class="ads-input-card">
+          <h3>➕ Thêm chi phí ADS thủ công</h3>
+          <div class="ads-form-row">
+            <div class="ads-field">
+              <label>Ngày</label>
+              <input type="date" id="ads-date" />
+            </div>
+            <div class="ads-field">
+              <label>Ghi chú (kênh, chiến dịch...)</label>
+              <input type="text" id="ads-note" placeholder="VD: Google Ads, TikTok..." />
+            </div>
+            <div class="ads-field">
+              <label>Số tiền (đ)</label>
+              <input type="text" id="ads-amount" placeholder="500,000" />
+            </div>
+            <button class="btn-add-ads" onclick="addAds()">+ Thêm</button>
+          </div>
+        </div>
+
+        <!-- ADS List -->
+        <div class="ads-list-card">
+          <div class="ads-list-header">
+            <span>Lịch sử chi phí ADS</span>
+            <button class="btn-clear-ads" onclick="clearAllAds()">🗑 Xoá tất cả</button>
+          </div>
+          <div id="adsTableWrap">
+            <div class="empty-state">
+              <div class="icon">📭</div>Chưa có dữ liệu ADS
+            </div>
+          </div>
+        </div>
+      </div><!-- end page-ads -->
+
+    </div><!-- end content -->
+  </div><!-- end main -->
+
+  <!-- ══ Bottom Nav (mobile) ══ -->
+  <nav class="bottom-nav">
+    <button class="bottom-nav-item active" id="bn-dashboard" onclick="showPage('dashboard')">
+      <span class="bn-icon">📊</span>Dashboard
+    </button>
+    <button class="bottom-nav-item" id="bn-orders" onclick="showPage('dashboard');setTimeout(scrollToTable,100)">
+      <span class="bn-icon">📋</span>Đơn hàng
+    </button>
+    <button class="bottom-nav-item" id="bn-products" onclick="showPage('dashboard');setTimeout(scrollToProducts,100)">
+      <span class="bn-icon">📦</span>Sản phẩm
+    </button>
+    <button class="bottom-nav-item" id="bn-ads" onclick="showPage('ads')">
+      <span class="bn-icon">📣</span>ADS
+    </button>
   </nav>
-  <div class="sidebar-footer">v1.0 · Google Sheets</div>
-</aside>
 
-<!-- ══ Main ══ -->
-<div class="main">
-
-  <!-- Topbar -->
-  <div class="topbar">
-    <div class="topbar-title">Báo cáo tổng hợp đơn hàng</div>
-    <div class="topbar-right">
-      <div class="status-dot" id="statusDot" title="Trạng thái kết nối"></div>
-      <button class="refresh-btn" onclick="loadData()">
-        <span class="icon" id="refreshIcon">↻</span> Làm mới
-      </button>
-      <button class="config-btn" onclick="openModal()">⚙ Cấu hình Sheet URL</button>
+  <!-- ══ FB Account Modal ══ -->
+  <div class="fb-modal-overlay" id="fbAccountModal" onclick="closeFbModalOutside(event)">
+    <div class="fb-modal">
+      <h3>➕ Thêm tài khoản quảng cáo FB</h3>
+      <p>Nhập thông tin tài khoản Facebook Ads để đồng bộ chi phí tự động.</p>
+      <div class="fb-modal-field">
+        <label>Tên tài khoản (để nhận biết)</label>
+        <input type="text" id="fb-acc-name" placeholder="VD: Shop Chính, TKQC 2, Tháng 6..." />
+      </div>
+      <div class="fb-modal-field">
+        <label>Ad Account ID</label>
+        <input type="text" id="fb-acc-id" placeholder="VD: act_1234567890" />
+      </div>
+      <div class="fb-modal-field">
+        <label>Access Token</label>
+        <input type="text" id="fb-acc-token" placeholder="EAAxxxxxxx..." />
+      </div>
+      <div class="fb-modal-note">
+        <b>Lấy Access Token ở đâu?</b><br>
+        Truy cập <b>developers.facebook.com</b> → Graph API Explorer → chọn App → Generate Token với quyền
+        <b>ads_read</b>. Account ID lấy từ trang Trình quản lý quảng cáo (bắt đầu bằng <b>act_</b>).
+      </div>
+      <div class="fb-modal-actions">
+        <button class="btn-fb-cancel" onclick="closeFbAccountModal()">Huỷ</button>
+        <button class="btn-fb-save" onclick="saveFbAccount()">💾 Lưu tài khoản</button>
+      </div>
     </div>
   </div>
 
-  <!-- Content -->
-  <div class="content">
-
-    <!-- ══ DASHBOARD PAGE ══ -->
-    <div class="page active" id="page-dashboard">
-
-    <!-- Demo banner -->
-    <div class="demo-banner" id="demoBanner">
-      <span>⚡ Đang hiển thị <strong>dữ liệu demo</strong> — Cấu hình Sheet URL để xem dữ liệu thật</span>
-      <button class="config-btn" onclick="openModal()" style="font-size:11px; padding:5px 10px;">Kết nối ngay</button>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <span class="filter-label">Xem theo:</span>
-      <button class="filter-btn active" onclick="setFilter('today')">Hôm nay</button>
-      <button class="filter-btn" onclick="setFilter('week')">7 ngày</button>
-      <button class="filter-btn" onclick="setFilter('month')">Tháng này</button>
-      <button class="filter-btn" onclick="setFilter('all')">Tất cả</button>
-      <div class="filter-divider"></div>
-      <div class="filter-custom">
-        <input type="date" id="filter-from" onchange="setFilter('custom')"/>
-        <span>→</span>
-        <input type="date" id="filter-to" onchange="setFilter('custom')"/>
-      </div>
-    </div>
-
-    <!-- KPI Cards row 1 (desktop grid) -->
-    <div class="kpi-grid" id="kpiGrid1">
-      <div class="kpi-card orange">
-        <div class="kpi-label">Tổng đơn hàng</div>
-        <div class="kpi-value" id="kpi-total">—</div>
-        <div class="kpi-sub" id="kpi-total-sub">đang tải...</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">Doanh thu</div>
-        <div class="kpi-value" id="kpi-revenue">—</div>
-        <div class="kpi-sub" id="kpi-revenue-sub">đang tải...</div>
-      </div>
-      <div class="kpi-card blue">
-        <div class="kpi-label">TB mỗi đơn</div>
-        <div class="kpi-value" id="kpi-avg">—</div>
-        <div class="kpi-sub">Giá trị trung bình</div>
-      </div>
-      <div class="kpi-card red">
-        <div class="kpi-label">Tổng cân nặng</div>
-        <div class="kpi-value" id="kpi-weight">—</div>
-        <div class="kpi-sub">kg hàng đã xử lý</div>
-      </div>
-    </div>
-
-    <!-- KPI Cards row 2 (desktop grid) -->
-    <div class="kpi-grid" id="kpiGrid2" style="margin-bottom:24px;">
-      <div class="kpi-card green">
-        <div class="kpi-label">💰 Lãi Tổng</div>
-        <div class="kpi-value" id="kpi-lai-tong">—</div>
-        <div class="kpi-sub" id="kpi-lai-tong-sub">Tổng lợi nhuận</div>
-      </div>
-      <div class="kpi-card orange">
-        <div class="kpi-label" id="kpi-lai-ngay-label">📈 Lãi Ngày</div>
-        <div class="kpi-value" id="kpi-lai-ngay">—</div>
-        <div class="kpi-sub">Lợi nhuận hôm nay</div>
-      </div>
-      <div class="kpi-card red">
-        <div class="kpi-label">📣 Chi phí ADS</div>
-        <div class="kpi-value" id="kpi-ads">—</div>
-        <div class="kpi-sub" id="kpi-ads-sub">Tổng quảng cáo</div>
-      </div>
-      <div class="kpi-card blue">
-        <div class="kpi-label">💵 Lợi nhuận/đơn TB</div>
-        <div class="kpi-value" id="kpi-loi-nhuan-avg">—</div>
-        <div class="kpi-sub">Trung bình mỗi đơn</div>
-      </div>
-    </div>
-
-    <!-- KPI Mobile List (chỉ hiện trên điện thoại) -->
-    <div class="kpi-mobile-list">
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot orange"></div><div><div class="kpi-mobile-label">Tổng đơn hàng</div><div class="kpi-mobile-sub" id="m-kpi-total-sub"></div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-total">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot green"></div><div><div class="kpi-mobile-label">Doanh thu</div><div class="kpi-mobile-sub" id="m-kpi-revenue-sub"></div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-revenue">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot blue"></div><div><div class="kpi-mobile-label">TB mỗi đơn</div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-avg">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot red"></div><div><div class="kpi-mobile-label">Tổng cân nặng</div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-weight">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot green"></div><div><div class="kpi-mobile-label">💰 Lãi Tổng</div><div class="kpi-mobile-sub" id="m-kpi-lai-tong-sub"></div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-lai-tong" style="color:var(--green)">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot orange"></div><div><div class="kpi-mobile-label" id="m-kpi-lai-ngay-label">📈 Lãi Ngày</div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-lai-ngay">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot red"></div><div><div class="kpi-mobile-label">📣 Chi phí ADS</div><div class="kpi-mobile-sub" id="m-kpi-ads-sub"></div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-ads">—</div>
-      </div>
-      <div class="kpi-mobile-row">
-        <div class="kpi-mobile-left"><div class="kpi-mobile-dot blue"></div><div><div class="kpi-mobile-label">💵 Lợi nhuận/đơn TB</div></div></div>
-        <div class="kpi-mobile-val" id="m-kpi-loi-nhuan-avg">—</div>
-      </div>
-    </div>
-
-    <!-- Charts -->
-    <div class="charts-row">
-      <div class="chart-card">
-        <div class="card-header">
-          <div class="card-title">Đơn hàng theo ngày</div>
-          <span class="card-badge" id="chart-period">7 ngày gần nhất</span>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="chartLine"></canvas>
-        </div>
-      </div>
-      <div class="chart-card">
-        <div class="card-header">
-          <div class="card-title">Doanh thu theo sản phẩm</div>
-        </div>
-        <div class="chart-wrap">
-          <canvas id="chartDoughnut"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- Order Table -->
-    <div class="table-card" id="orderTable" style="margin-bottom:24px;">
-      <div class="table-header">
-        <div class="card-title">📋 Danh sách đơn hàng</div>
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button class="sort-btn desc" id="sortBtn" onclick="toggleSort()">
-            <span id="sortIcon">↓</span> <span id="sortLabel">Mới nhất</span>
-          </button>
-          <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="Tìm theo tên, SĐT, sản phẩm..." oninput="filterTable()"/>
-          </div>
-        </div>
-      </div>
-      <div id="tableWrap">
-        <div class="empty-state"><div class="icon">⏳</div>Đang tải dữ liệu...</div>
-      </div>
-    </div>
-
-    <!-- Products -->
-    <div class="table-card" id="productSection">
-      <div class="table-header">
-        <div class="card-title">📦 Thống kê sản phẩm bán chạy</div>
-      </div>
-      <div class="products-row" id="productsGrid">
-        <div class="empty-state" style="grid-column:1/-1"><div class="icon">⏳</div>Đang tải...</div>
-      </div>
-    </div>
-
-    </div><!-- end page-dashboard -->
-
-    <!-- ══ ADS PAGE ══ -->
-    <div class="page" id="page-ads">
-      <div class="ads-page-header">
-        <div class="ads-page-title">📣 Chi phí <span>ADS</span></div>
-      </div>
-
-      <!-- Summary -->
-      <div class="ads-summary-row">
-        <div class="ads-sum-card">
-          <div class="label">Tổng ADS đã chi</div>
-          <div class="val" id="ads-sum-total" style="color:var(--red)">0đ</div>
-        </div>
-        <div class="ads-sum-card">
-          <div class="label">ADS hôm nay</div>
-          <div class="val" id="ads-sum-today" style="color:var(--accent)">0đ</div>
-        </div>
-        <div class="ads-sum-card">
-          <div class="label">ADS tháng này</div>
-          <div class="val" id="ads-sum-month" style="color:var(--blue)">0đ</div>
-        </div>
-      </div>
-
-      <!-- FB Accounts Management -->
-      <div class="fb-accounts-card">
-        <div class="fb-accounts-header">
-          <div class="fb-accounts-title">
-            <span style="background:#1877f2;border-radius:6px;padding:2px 8px;font-size:13px;color:#fff;font-family:var(--font-body)">f</span>
-            Tài khoản quảng cáo Facebook
-          </div>
-          <button class="btn-add-fb-account" onclick="openFbAccountModal()">+ Thêm tài khoản</button>
-        </div>
-        <div class="fb-accounts-list" id="fbAccountsList">
-          <div class="fb-empty">Chưa có tài khoản nào. Nhấn "+ Thêm tài khoản" để bắt đầu.</div>
-        </div>
-      </div>
-
-      <!-- FB Sync Card -->
-      <div class="ads-input-card" style="margin-bottom:16px">
-        <h3 style="display:flex;align-items:center;gap:8px">
-          <span style="background:#1877f2;border-radius:6px;padding:2px 8px;font-size:13px;color:#fff;font-family:var(--font-body)">f</span>
-          Đồng bộ từ Facebook Ads
-        </h3>
-        <div style="display:grid;grid-template-columns:1fr 140px 140px auto;gap:10px;align-items:end">
-          <div class="ads-field">
-            <label>Tài khoản</label>
-            <select class="fb-select" id="fb-account-select">
-              <option value="">— Chọn tài khoản —</option>
-            </select>
-          </div>
-          <div class="ads-field">
-            <label>Từ ngày</label>
-            <input type="date" id="fb-date-from"/>
-          </div>
-          <div class="ads-field">
-            <label>Đến ngày</label>
-            <input type="date" id="fb-date-to"/>
-          </div>
-          <button class="btn-add-ads" id="fbSyncBtn" onclick="syncFbAds()" style="background:var(--blue);white-space:nowrap">
-            ⟳ Đồng bộ FB
-          </button>
-        </div>
-        <div id="fb-sync-status" style="margin-top:10px;font-size:12px;color:var(--muted);min-height:18px"></div>
-      </div>
-
-      <!-- Input form -->
-      <div class="ads-input-card">
-        <h3>➕ Thêm chi phí ADS thủ công</h3>
-        <div class="ads-form-row">
-          <div class="ads-field">
-            <label>Ngày</label>
-            <input type="date" id="ads-date"/>
-          </div>
-          <div class="ads-field">
-            <label>Ghi chú (kênh, chiến dịch...)</label>
-            <input type="text" id="ads-note" placeholder="VD: Google Ads, TikTok..."/>
-          </div>
-          <div class="ads-field">
-            <label>Số tiền (đ)</label>
-            <input type="text" id="ads-amount" placeholder="500,000"/>
-          </div>
-          <button class="btn-add-ads" onclick="addAds()">+ Thêm</button>
-        </div>
-      </div>
-
-      <!-- ADS List -->
-      <div class="ads-list-card">
-        <div class="ads-list-header">
-          <span>Lịch sử chi phí ADS</span>
-          <button class="btn-clear-ads" onclick="clearAllAds()">🗑 Xoá tất cả</button>
-        </div>
-        <div id="adsTableWrap">
-          <div class="empty-state"><div class="icon">📭</div>Chưa có dữ liệu ADS</div>
-        </div>
-      </div>
-    </div><!-- end page-ads -->
-
-  </div><!-- end content -->
-</div><!-- end main -->
-
-<!-- ══ Bottom Nav (mobile) ══ -->
-<nav class="bottom-nav">
-  <button class="bottom-nav-item active" id="bn-dashboard" onclick="showPage('dashboard')">
-    <span class="bn-icon">📊</span>Dashboard
-  </button>
-  <button class="bottom-nav-item" id="bn-orders" onclick="showPage('dashboard');setTimeout(scrollToTable,100)">
-    <span class="bn-icon">📋</span>Đơn hàng
-  </button>
-  <button class="bottom-nav-item" id="bn-products" onclick="showPage('dashboard');setTimeout(scrollToProducts,100)">
-    <span class="bn-icon">📦</span>Sản phẩm
-  </button>
-  <button class="bottom-nav-item" id="bn-ads" onclick="showPage('ads')">
-    <span class="bn-icon">📣</span>ADS
-  </button>
-</nav>
-
-<!-- ══ FB Account Modal ══ -->
-<div class="fb-modal-overlay" id="fbAccountModal" onclick="closeFbModalOutside(event)">
-  <div class="fb-modal">
-    <h3>➕ Thêm tài khoản quảng cáo FB</h3>
-    <p>Nhập thông tin tài khoản Facebook Ads để đồng bộ chi phí tự động.</p>
-    <div class="fb-modal-field">
-      <label>Tên tài khoản (để nhận biết)</label>
-      <input type="text" id="fb-acc-name" placeholder="VD: Shop Chính, TKQC 2, Tháng 6..."/>
-    </div>
-    <div class="fb-modal-field">
-      <label>Ad Account ID</label>
-      <input type="text" id="fb-acc-id" placeholder="VD: act_1234567890"/>
-    </div>
-    <div class="fb-modal-field">
-      <label>Access Token</label>
-      <input type="text" id="fb-acc-token" placeholder="EAAxxxxxxx..."/>
-    </div>
-    <div class="fb-modal-note">
-      <b>Lấy Access Token ở đâu?</b><br>
-      Truy cập <b>developers.facebook.com</b> → Graph API Explorer → chọn App → Generate Token với quyền <b>ads_read</b>. Account ID lấy từ trang Trình quản lý quảng cáo (bắt đầu bằng <b>act_</b>).
-    </div>
-    <div class="fb-modal-actions">
-      <button class="btn-fb-cancel" onclick="closeFbAccountModal()">Huỷ</button>
-      <button class="btn-fb-save" onclick="saveFbAccount()">💾 Lưu tài khoản</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ Config Modal ══ -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <h3>⚙ Cấu hình Google Sheet URL</h3>
-    <p>
-      Nhập <strong style="color:var(--accent)">Web App URL</strong> từ Google Apps Script.<br>
-      Script cần hàm <code style="background:var(--bg);padding:2px 6px;border-radius:3px;font-size:11px;">doGet()</code> trả về toàn bộ data dạng JSON.
-    </p>
-    <input type="text" id="modalUrlInput" placeholder="https://script.google.com/macros/s/.../exec"/>
-    <div style="margin-top:12px; padding:12px; background:var(--bg); border-radius:6px; font-size:12px; color:var(--muted); line-height:1.8;">
-      <strong style="color:var(--accent);">Apps Script cần thêm hàm doGet():</strong><br>
-      <pre style="margin-top:8px; color:#a0c4ff; font-size:11.5px; white-space:pre-wrap;">function doGet() {
+  <!-- ══ Config Modal ══ -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <h3>⚙ Cấu hình Google Sheet URL</h3>
+      <p>
+        Nhập <strong style="color:var(--accent)">Web App URL</strong> từ Google Apps Script.<br>
+        Script cần hàm <code
+          style="background:var(--bg);padding:2px 6px;border-radius:3px;font-size:11px;">doGet()</code> trả về toàn bộ
+        data dạng JSON.
+      </p>
+      <input type="text" id="modalUrlInput" placeholder="https://script.google.com/macros/s/.../exec" />
+      <div
+        style="margin-top:12px; padding:12px; background:var(--bg); border-radius:6px; font-size:12px; color:var(--muted); line-height:1.8;">
+        <strong style="color:var(--accent);">Apps Script cần thêm hàm doGet():</strong><br>
+        <pre style="margin-top:8px; color:#a0c4ff; font-size:11.5px; white-space:pre-wrap;">function doGet() {
   var sheet = SpreadsheetApp
     .getActiveSpreadsheet()
     .getActiveSheet();
@@ -1267,718 +2345,728 @@
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }</pre>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
-      <button class="btn-save" onclick="saveModalUrl()">💾 Lưu & Tải dữ liệu</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Huỷ</button>
+        <button class="btn-save" onclick="saveModalUrl()">💾 Lưu & Tải dữ liệu</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-// ═══════════════════════════════════════
-//  CONFIG & STATE
-// ═══════════════════════════════════════
-const STORAGE_KEY = 'admin_sheet_url';
-let allOrders = [];
-let lineChart = null;
-let doughnutChart = null;
+  <script>
+    // ═══════════════════════════════════════
+    //  CONFIG & STATE
+    // ═══════════════════════════════════════
+    const STORAGE_KEY = 'admin_sheet_url';
+    let allOrders = [];
+    let lineChart = null;
+    let doughnutChart = null;
 
-// ── Demo data ──
-const DEMO_DATA = (() => {
-  const products = ['Áo thun', 'Quần jeans', 'Giày sneaker', 'Túi xách', 'Váy hoa', 'Dép sandal'];
-  const names = ['Nguyễn Văn An','Trần Thị Bình','Lê Minh Cường','Phạm Thị Dung',
-    'Hoàng Văn Em','Đỗ Thị Phương','Bùi Quang Hải','Ngô Thị Lan','Vũ Đình Nam','Đặng Thị Oanh',
-    'Phan Văn Phúc','Trương Thị Quỳnh','Lý Văn Sơn','Đinh Thị Thủy','Mai Văn Uy'];
-  const phones = ['0901','0911','0912','0931','0941','0961','0971','0981','0356','0386'];
-  const data = [];
-  const now = new Date();
-  for (let i = 0; i < 40; i++) {
-    const d = new Date(now - Math.random() * 15 * 86400000);
-    const p = products[Math.floor(Math.random()*products.length)];
-    const price = (Math.floor(Math.random()*80)+5)*10000;
-    const weight = +(Math.random()*5+0.3).toFixed(1);
-    const name = names[Math.floor(Math.random()*names.length)];
-    const phone = phones[Math.floor(Math.random()*phones.length)] + String(Math.floor(Math.random()*9000000)+1000000);
-    data.push({
-      'Thời gian': d.toLocaleString('vi-VN'),
-      'Họ tên': name,
-      'SĐT': phone,
-      'Địa chỉ': `${Math.floor(Math.random()*200)+1} đường Lê Lợi, Q.${Math.floor(Math.random()*12)+1}, TP.HCM`,
-      'Sản phẩm': p,
-      'Giá': price.toLocaleString('vi-VN'),
-      'Cân nặng': weight,
-      '_date': d
-    });
-  }
-  return data.sort((a,b) => b._date - a._date);
-})();
+    // ── Demo data ──
+    const DEMO_DATA = (() => {
+      const products = ['Áo thun', 'Quần jeans', 'Giày sneaker', 'Túi xách', 'Váy hoa', 'Dép sandal'];
+      const names = ['Nguyễn Văn An', 'Trần Thị Bình', 'Lê Minh Cường', 'Phạm Thị Dung',
+        'Hoàng Văn Em', 'Đỗ Thị Phương', 'Bùi Quang Hải', 'Ngô Thị Lan', 'Vũ Đình Nam', 'Đặng Thị Oanh',
+        'Phan Văn Phúc', 'Trương Thị Quỳnh', 'Lý Văn Sơn', 'Đinh Thị Thủy', 'Mai Văn Uy'];
+      const phones = ['0901', '0911', '0912', '0931', '0941', '0961', '0971', '0981', '0356', '0386'];
+      const data = [];
+      const now = new Date();
+      for (let i = 0; i < 40; i++) {
+        const d = new Date(now - Math.random() * 15 * 86400000);
+        const p = products[Math.floor(Math.random() * products.length)];
+        const price = (Math.floor(Math.random() * 80) + 5) * 10000;
+        const weight = +(Math.random() * 5 + 0.3).toFixed(1);
+        const name = names[Math.floor(Math.random() * names.length)];
+        const phone = phones[Math.floor(Math.random() * phones.length)] + String(Math.floor(Math.random() * 9000000) + 1000000);
+        data.push({
+          'Thời gian': d.toLocaleString('vi-VN'),
+          'Họ tên': name,
+          'SĐT': phone,
+          'Địa chỉ': `${Math.floor(Math.random() * 200) + 1} đường Lê Lợi, Q.${Math.floor(Math.random() * 12) + 1}, TP.HCM`,
+          'Sản phẩm': p,
+          'Giá': price.toLocaleString('vi-VN'),
+          'Cân nặng': weight,
+          '_date': d
+        });
+      }
+      return data.sort((a, b) => b._date - a._date);
+    })();
 
-// ═══════════════════════════════════════
-//  MODAL
-// ═══════════════════════════════════════
-function openModal() {
-  const saved = localStorage.getItem(STORAGE_KEY) || '';
-  document.getElementById('modalUrlInput').value = saved;
-  document.getElementById('modalOverlay').classList.add('show');
-}
-function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
-function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
-function saveModalUrl() {
-  const val = document.getElementById('modalUrlInput').value.trim();
-  if (val && !val.startsWith('https://script.google.com')) {
-    alert('URL không hợp lệ!'); return;
-  }
-  if (val) localStorage.setItem(STORAGE_KEY, val);
-  closeModal();
-  loadData();
-}
-
-// ═══════════════════════════════════════
-//  LOAD DATA
-// ═══════════════════════════════════════
-async function loadData() {
-  const url = localStorage.getItem(STORAGE_KEY);
-  setRefreshing(true);
-
-  if (!url) {
-    // Demo mode
-    document.getElementById('demoBanner').classList.remove('hidden');
-    document.getElementById('statusDot').classList.add('offline');
-    await fakeSleep(600);
-    processOrders(DEMO_DATA, true);
-  } else {
-    document.getElementById('demoBanner').classList.add('hidden');
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      document.getElementById('statusDot').classList.remove('offline');
-      // Gắn _date
-      data.forEach(row => {
-        row._date = parseViDate(row['Thời gian'] || row['Thoi gian'] || '');
-      });
-      processOrders(data.sort((a,b)=> b._date - a._date), false);
-    } catch(err) {
-      document.getElementById('statusDot').classList.add('offline');
-      // Fallback demo
-      document.getElementById('demoBanner').classList.remove('hidden');
-      const bannerSpan = document.getElementById('demoBanner').querySelector('span');
-      if (bannerSpan) bannerSpan.innerHTML = '⚠️ <strong>Không thể kết nối Sheet</strong> — Đang hiển thị dữ liệu demo. Kiểm tra URL và quyền truy cập.';
-      processOrders(DEMO_DATA, true);
+    // ═══════════════════════════════════════
+    //  MODAL
+    // ═══════════════════════════════════════
+    function openModal() {
+      const saved = localStorage.getItem(STORAGE_KEY) || '';
+      document.getElementById('modalUrlInput').value = saved;
+      document.getElementById('modalOverlay').classList.add('show');
     }
-  }
-
-  setRefreshing(false);
-}
-
-function fakeSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-function setRefreshing(state) {
-  const btn = document.querySelector('.refresh-btn');
-  if (state) btn.classList.add('spinning'); else btn.classList.remove('spinning');
-}
-
-// ═══════════════════════════════════════
-//  PROCESS & RENDER
-// ═══════════════════════════════════════
-// ── Map key linh hoạt khớp mọi tên cột trong Sheet ──
-function getField(row, ...keys) {
-  for (const k of keys) {
-    if (row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];
-  }
-  return '';
-}
-function formatViDate(str) {
-  if (!str) return '';
-  str = String(str).trim();
-  // ISO format (2026-02-25T03:36:20.000Z) → chuyển sang giờ VN đọc được
-  if (str.includes('T') || str.includes('Z')) {
-    const d = new Date(str);
-    if (!isNaN(d)) {
-      return d.toLocaleString('vi-VN', {
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-      }).replace(',', '');
+    function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+    function closeModalOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+    function saveModalUrl() {
+      const val = document.getElementById('modalUrlInput').value.trim();
+      if (val && !val.startsWith('https://script.google.com')) {
+        alert('URL không hợp lệ!'); return;
+      }
+      if (val) localStorage.setItem(STORAGE_KEY, val);
+      closeModal();
+      loadData();
     }
-  }
-  // Đã là DD/MM/YYYY ... → giữ nguyên
-  return str;
-}
 
-function normalize(row) {
-  const rawTime = getField(row, 'Thời gian','Thoi gian');
-  return {
-    time:      formatViDate(rawTime),
-    name:      getField(row, 'Ho Tên','Họ tên','Ho Ten','Họ Tên','ho ten'),
-    phone:     getField(row, 'SDT','SĐT','Sdt','sdt'),
-    address:   getField(row, 'Địa Chỉ','Địa chỉ','Dia Chi','dia chi'),
-    product:   getField(row, 'Sản Phẩm','Sản phẩm','San Pham','san pham'),
-    price:     getField(row, 'Giá','Gia','gia'),
-    weight:    getField(row, 'Cân nặng','Can nang','can nang'),
-    cod:       getField(row, 'COD','Cod','cod'),
-    ship:      getField(row, 'Phi ship','Phí ship','Phí Ship','phi ship'),
-    loinhuan:  getField(row, 'Lợi nhuận/đơn','Loi nhuan/don','loi nhuan','Lợi nhuận'),
-    ads:       getField(row, 'ADS','Ads','ads','Chi phí ADS'),
-    laingay:   getField(row, 'Lãi Ngày','Lai Ngay','lai ngay','Lãi ngày'),
-    laitong:   getField(row, 'Lãi Tổng','Lai Tong','lai tong','Lãi tổng'),
-    _raw:      row
-  };
-}
+    // ═══════════════════════════════════════
+    //  LOAD DATA
+    // ═══════════════════════════════════════
+    async function loadData() {
+      const url = localStorage.getItem(STORAGE_KEY);
+      setRefreshing(true);
 
-function parseViDate(str) {
-  if (!str) return new Date(0);
-  str = String(str).trim();
-  // ISO format (có T hoặc Z) → parse trực tiếp
-  if (str.includes('T') || str.includes('Z')) {
-    const d = new Date(str);
-    if (!isNaN(d)) return d;
-  }
-  // Format DD/MM/YYYY HH:mm:ss hoặc DD/MM/YYYY, HH:mm:ss
-  const m = str.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-  if (m) {
-    const day = parseInt(m[1]), month = parseInt(m[2]), year = parseInt(m[3]);
-    const timePart = str.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-    const h  = timePart ? parseInt(timePart[1]) : 0;
-    const mi = timePart ? parseInt(timePart[2]) : 0;
-    const s  = timePart ? parseInt(timePart[3]||0) : 0;
-    return new Date(year, month-1, day, h, mi, s);
-  }
-  return new Date(0);
-}
-
-function parsePrice(str) {
-  if (typeof str === 'number') return str;
-  return parseInt(String(str).replace(/\D/g,'')) || 0;
-}
-function parseWeight(val) {
-  return parseFloat(String(val).replace(',','.')) || 0;
-}
-
-let currentFilter = 'today';
-
-function setFilter(type) {
-  currentFilter = type;
-  // Update active button
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  const map = { today: 0, week: 1, month: 2, all: 3 };
-  const btns = document.querySelectorAll('.filter-btn');
-  if (map[type] !== undefined) btns[map[type]].classList.add('active');
-  else btns[3].classList.remove('active'); // custom = none active
-
-  applyFilter();
-}
-
-function getFilteredRows(rows) {
-  const now   = new Date();
-  const today = new Date(now); today.setHours(0,0,0,0);
-
-  if (currentFilter === 'today') {
-    const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
-    return rows.filter(r => r._raw._date >= today && r._raw._date < tomorrow);
-  }
-  if (currentFilter === 'week') {
-    const from = new Date(today); from.setDate(from.getDate()-6);
-    return rows.filter(r => r._raw._date >= from);
-  }
-  if (currentFilter === 'month') {
-    const from = new Date(now.getFullYear(), now.getMonth(), 1);
-    return rows.filter(r => r._raw._date >= from);
-  }
-  if (currentFilter === 'custom') {
-    const fromVal = document.getElementById('filter-from').value;
-    const toVal   = document.getElementById('filter-to').value;
-    const from = fromVal ? new Date(fromVal + 'T00:00:00') : null;
-    const to   = toVal   ? new Date(toVal   + 'T23:59:59') : null;
-    return rows.filter(r => {
-      if (from && r._raw._date < from) return false;
-      if (to   && r._raw._date > to)   return false;
-      return true;
-    });
-  }
-  return rows; // all
-}
-
-function applyFilter() {
-  if (!allOrders.length) return;
-  const allRows = allOrders.map(normalize);
-  const rows    = getFilteredRows(allRows);
-  renderKPIs(rows, false);
-  renderLineChart(allRows); // chart always shows full 7 days
-  renderDoughnutChart(rows);
-  // Sort before rendering table
-  const sortedRows = [...rows].sort((a,b) =>
-    sortOrder === 'desc' ? b._raw._date - a._raw._date : a._raw._date - b._raw._date
-  );
-  renderTable(sortedRows);
-  renderProducts(rows);
-  // Update filter label on chart
-  const labels = { today:'Hôm nay', week:'7 ngày gần nhất', month:'Tháng này', all:'Tất cả', custom:'Tuỳ chỉnh' };
-  document.getElementById('chart-period').textContent = labels[currentFilter] || '7 ngày gần nhất';
-}
-
-function renderKPIs(rows, isDemo) {
-  const total   = rows.length;
-  const revenue = rows.reduce((s,r) => s + parsePrice(r.price), 0);
-  const cod     = rows.reduce((s,r) => s + parsePrice(r.cod), 0);
-  const ship    = rows.reduce((s,r) => s + parsePrice(r.ship), 0);
-  const avg     = total ? Math.round(revenue / total) : 0;
-  const weight  = rows.reduce((s,r) => s + parseWeight(r.weight), 0);
-  const totalLN = rows.reduce((s,r) => s + (parsePrice(r.price) - parsePrice(r.ship) - parsePrice(r.cod)), 0);
-  const avgLN   = total ? Math.round(totalLN / total) : 0;
-
-  // ADS trong khoảng lọc
-  const adsData = getAdsData();
-  let adsInRange = adsData;
-  const now = new Date();
-  if (currentFilter === 'today') {
-    const ds = now.toISOString().split('T')[0];
-    adsInRange = adsData.filter(a => a.date === ds);
-  } else if (currentFilter === 'week') {
-    const from = new Date(); from.setDate(from.getDate()-6); from.setHours(0,0,0,0);
-    adsInRange = adsData.filter(a => new Date(a.date+'T00:00:00') >= from);
-  } else if (currentFilter === 'month') {
-    const ms = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    adsInRange = adsData.filter(a => a.date.startsWith(ms));
-  } else if (currentFilter === 'custom') {
-    const fromVal = document.getElementById('filter-from').value;
-    const toVal   = document.getElementById('filter-to').value;
-    adsInRange = adsData.filter(a => {
-      if (fromVal && a.date < fromVal) return false;
-      if (toVal   && a.date > toVal)   return false;
-      return true;
-    });
-  }
-  const totalAds = adsInRange.reduce((s,a) => s + a.amount, 0);
-  const laiTong  = totalLN - totalAds;
-
-  // Lãi ngày (chỉ hiển thị khi filter = today)
-  const laiNgay = currentFilter === 'today' ? totalLN : 0;
-
-  document.getElementById('kpi-total').textContent = total;
-  const totalSubEl = document.getElementById('kpi-total-sub');
-  if (totalSubEl) totalSubEl.textContent = isDemo ? 'Demo data' : '↑ Thực tế';
-  document.getElementById('kpi-revenue').textContent = formatMoney(revenue);
-  document.getElementById('kpi-revenue-sub').textContent = `COD: ${formatMoney(cod)}đ · Ship: ${formatMoney(ship)}đ`;
-  document.getElementById('kpi-avg').textContent = formatMoney(avg);
-  document.getElementById('kpi-weight').textContent = weight.toFixed(1) + ' kg';
-
-  document.getElementById('kpi-lai-tong').textContent = formatMoney(laiTong) + 'đ';
-  document.getElementById('kpi-lai-tong').style.color = laiTong >= 0 ? 'var(--green)' : 'var(--red)';
-  document.getElementById('kpi-lai-tong-sub').textContent = `Lợi nhuận/đơn TB: ${formatMoney(avgLN)}đ`;
-
-  const laiNgayLabel = { today:'Hôm nay', week:'7 ngày', month:'Tháng này', all:'Tổng', custom:'Kỳ này' };
-  const laiNgayLabelEl = document.getElementById('kpi-lai-ngay-label');
-  if (laiNgayLabelEl) laiNgayLabelEl.textContent = `📈 Lãi ${laiNgayLabel[currentFilter]||''}`;
-  document.getElementById('kpi-lai-ngay').textContent = formatMoney(totalLN) + 'đ';
-  document.getElementById('kpi-lai-ngay').style.color = totalLN >= 0 ? 'var(--accent)' : 'var(--red)';
-
-  document.getElementById('kpi-ads').textContent = formatMoney(totalAds) + 'đ';
-  document.getElementById('kpi-ads-sub').textContent = revenue
-    ? `${((totalAds/revenue)*100).toFixed(1)}% doanh thu`
-    : `${adsInRange.length} khoản`;
-  document.getElementById('kpi-loi-nhuan-avg').textContent = formatMoney(avgLN) + 'đ';
-
-  // ── Sync mobile list ──
-  const laiNgayColor = totalLN >= 0 ? 'var(--accent)' : 'var(--red)';
-  const laiTongColor = laiTong >= 0 ? 'var(--green)' : 'var(--red)';
-  const adsSub = revenue ? `${((totalAds/revenue)*100).toFixed(1)}% doanh thu` : `${adsInRange.length} khoản`;
-  const revSub = `COD: ${formatMoney(cod)}đ · Ship: ${formatMoney(ship)}đ`;
-  const setM = (id, val, color) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = val;
-    if (color) el.style.color = color;
-  };
-  setM('m-kpi-total',          total);
-  setM('m-kpi-total-sub',      isDemo ? 'Demo data' : '↑ Thực tế');
-  setM('m-kpi-revenue',        formatMoney(revenue) + 'đ');
-  setM('m-kpi-revenue-sub',    revSub);
-  setM('m-kpi-avg',            formatMoney(avg) + 'đ');
-  setM('m-kpi-weight',         weight.toFixed(1) + ' kg');
-  setM('m-kpi-lai-tong',       formatMoney(laiTong) + 'đ', laiTongColor);
-  setM('m-kpi-lai-tong-sub',   `LN/đơn TB: ${formatMoney(avgLN)}đ`);
-  setM('m-kpi-lai-ngay',       formatMoney(totalLN) + 'đ', laiNgayColor);
-  setM('m-kpi-lai-ngay-label', `📈 Lãi ${laiNgayLabel[currentFilter]||''}`);
-  setM('m-kpi-ads',            formatMoney(totalAds) + 'đ');
-  setM('m-kpi-ads-sub',        adsSub);
-  setM('m-kpi-loi-nhuan-avg',  formatMoney(avgLN) + 'đ');
-}
-
-function processOrders(data, isDemo) {
-  allOrders = data;
-  applyFilter();
-  // Set isDemo flag on first load
-  if (isDemo) {
-    const sub = document.getElementById('kpi-total-sub');
-    if (sub) sub.textContent = 'Demo data';
-  }
-}
-
-function formatMoney(n) {
-  if (n >= 1e9) return (n/1e9).toFixed(1) + 'B';
-  if (n >= 1e6) return (n/1e6).toFixed(1) + 'M';
-  if (n >= 1e3) return (n/1e3).toFixed(0) + 'K';
-  return n.toLocaleString('vi-VN');
-}
-
-// ── Line chart ──
-function renderLineChart(rows) {
-  const days = 7;
-  const labels = [], counts = [], revenues = [];
-  for (let i = days-1; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate()-i); d.setHours(0,0,0,0);
-    const next = new Date(d); next.setDate(next.getDate()+1);
-    labels.push(d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'}));
-    const dayRows = rows.filter(r => r._raw._date >= d && r._raw._date < next);
-    counts.push(dayRows.length);
-    revenues.push(dayRows.reduce((s,r)=>s+parsePrice(r.price),0)/1e3);
-  }
-
-  if (lineChart) { lineChart.destroy(); }
-  const ctx = document.getElementById('chartLine').getContext('2d');
-  lineChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Số đơn',
-          data: counts,
-          borderColor: '#f0a050',
-          backgroundColor: 'rgba(240,160,80,0.08)',
-          tension: 0.4, fill: true,
-          pointBackgroundColor: '#f0a050',
-          pointRadius: 4, pointHoverRadius: 6,
-          yAxisID: 'y'
-        },
-        {
-          label: 'Doanh thu (K)',
-          data: revenues,
-          borderColor: '#4f8ef7',
-          backgroundColor: 'rgba(79,142,247,0.06)',
-          tension: 0.4, fill: true,
-          pointBackgroundColor: '#4f8ef7',
-          pointRadius: 4, pointHoverRadius: 6,
-          yAxisID: 'y1'
+      if (!url) {
+        // Demo mode
+        document.getElementById('demoBanner').classList.remove('hidden');
+        document.getElementById('statusDot').classList.add('offline');
+        await fakeSleep(600);
+        processOrders(DEMO_DATA, true);
+      } else {
+        document.getElementById('demoBanner').classList.add('hidden');
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          document.getElementById('statusDot').classList.remove('offline');
+          data.forEach(row => {
+            const rawTime = row['Thời gian'] || row['Thoi gian']
+              || row['thoi gian'] || row['THOI GIAN'] || '';
+            row._date = parseViDate(rawTime);
+          });
+          processOrders(data.sort((a, b) => b._date - a._date), false);
+        } catch (err) {
+          document.getElementById('statusDot').classList.add('offline');
+          // Fallback demo
+          document.getElementById('demoBanner').classList.remove('hidden');
+          const bannerSpan = document.getElementById('demoBanner').querySelector('span');
+          if (bannerSpan) bannerSpan.innerHTML = '⚠️ <strong>Không thể kết nối Sheet</strong> — Đang hiển thị dữ liệu demo. Kiểm tra URL và quyền truy cập.';
+          processOrders(DEMO_DATA, true);
         }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { labels: { color: '#6b7280', font: { size: 11 } } } },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', font: { size: 11 } }, position: 'left' },
-        y1: { grid: { drawOnChartArea: false }, ticks: { color: '#4f8ef7', font: { size: 11 } }, position: 'right' }
+      }
+
+      setRefreshing(false);
+    }
+
+    function fakeSleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function setRefreshing(state) {
+      const btn = document.querySelector('.refresh-btn');
+      if (state) btn.classList.add('spinning'); else btn.classList.remove('spinning');
+    }
+
+    // ═══════════════════════════════════════
+    //  PROCESS & RENDER
+    // ═══════════════════════════════════════
+    // ── Map key linh hoạt khớp mọi tên cột trong Sheet ──
+    function getField(row, ...keys) {
+      for (const k of keys) {
+        if (row[k] !== undefined && row[k] !== null && row[k] !== '') return row[k];
+      }
+      return '';
+    }
+    function formatViDate(raw) {
+      if (raw === '' || raw === null || raw === undefined) return '';
+      const d = parseViDate(raw);
+      if (!d || isNaN(d) || d.getTime() === 0) return String(raw);
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    }
+
+    function normalize(row) {
+      const rawTime = getField(row, 'Thời gian', 'Thoi gian');
+      return {
+        time: formatViDate(rawTime),
+        name: getField(row, 'Ho Tên', 'Họ tên', 'Ho Ten', 'Họ Tên', 'ho ten'),
+        phone: getField(row, 'SDT', 'SĐT', 'Sdt', 'sdt'),
+        address: getField(row, 'Địa Chỉ', 'Địa chỉ', 'Dia Chi', 'dia chi'),
+        product: getField(row, 'Sản Phẩm', 'Sản phẩm', 'San Pham', 'san pham'),
+        price: getField(row, 'Giá', 'Gia', 'gia'),
+        weight: getField(row, 'Cân nặng', 'Can nang', 'can nang'),
+        cod: getField(row, 'COD', 'Cod', 'cod'),
+        ship: getField(row, 'Phi ship', 'Phí ship', 'Phí Ship', 'phi ship'),
+        loinhuan: getField(row, 'Lợi nhuận/đơn', 'Loi nhuan/don', 'loi nhuan', 'Lợi nhuận'),
+        ads: getField(row, 'ADS', 'Ads', 'ads', 'Chi phí ADS'),
+        laingay: getField(row, 'Lãi Ngày', 'Lai Ngay', 'lai ngay', 'Lãi ngày'),
+        laitong: getField(row, 'Lãi Tổng', 'Lai Tong', 'lai tong', 'Lãi tổng'),
+        _raw: row
+      };
+    }
+
+    function parseViDate(str) {
+      if (str === null || str === undefined || str === '') return new Date(0);
+      // Excel serial number
+      if (typeof str === 'number' && str > 40000) {
+        const d = new Date(Date.UTC(1899, 11, 30));
+        d.setUTCDate(d.getUTCDate() + Math.floor(str));
+        d.setUTCSeconds(Math.round((str - Math.floor(str)) * 86400));
+        return d;
+      }
+      str = String(str).trim();
+      if (!str) return new Date(0);
+
+      // ISO string (có T hoặc Z)
+      if (str.includes('T') || str.includes('Z')) {
+        const d = new Date(str);
+        if (!isNaN(d)) return d;
+      }
+
+      // Format 1: "HH:mm:ss D/M/YYYY" hoặc "HH:mm D/M/YYYY"
+      const m1 = str.match(
+        /^(\d{1,2}):(\d{2})(?::(\d{2}))?\s+(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/
+      );
+      if (m1) {
+        const [, hh, mi, ss, dd, mo, yyyy] = m1;
+        return new Date(+yyyy, +mo - 1, +dd, +hh, +mi, +(ss || 0));
+      }
+
+      // Format 2: "D/M/YYYY HH:mm:ss" hoặc "DD/MM/YYYY H:mm:ss"
+      const m2 = str.match(
+        /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/
+      );
+      if (m2) {
+        const [, dd, mo, yyyy, hh, mi, ss] = m2;
+        return new Date(+yyyy, +mo - 1, +dd, +hh, +mi, +(ss || 0));
+      }
+
+      return new Date(0);
+    }
+
+    function parsePrice(str) {
+      if (typeof str === 'number') return str;
+      return parseInt(String(str).replace(/\D/g, '')) || 0;
+    }
+    function parseWeight(val) {
+      return parseFloat(String(val).replace(',', '.')) || 0;
+    }
+
+    let currentFilter = 'today';
+
+    function setFilter(type) {
+      currentFilter = type;
+      // Update active button
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      const map = { today: 0, week: 1, month: 2, all: 3 };
+      const btns = document.querySelectorAll('.filter-btn');
+      if (map[type] !== undefined) btns[map[type]].classList.add('active');
+      else btns[3].classList.remove('active'); // custom = none active
+
+      applyFilter();
+    }
+
+    function getFilteredRows(rows) {
+      const now = new Date();
+      const today = new Date(now); today.setHours(0, 0, 0, 0);
+
+      if (currentFilter === 'today') {
+        const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+        return rows.filter(r => r._raw._date >= today && r._raw._date < tomorrow);
+      }
+      if (currentFilter === 'week') {
+        const from = new Date(today); from.setDate(from.getDate() - 6);
+        return rows.filter(r => r._raw._date >= from);
+      }
+      if (currentFilter === 'month') {
+        const from = new Date(now.getFullYear(), now.getMonth(), 1);
+        return rows.filter(r => r._raw._date >= from);
+      }
+      if (currentFilter === 'custom') {
+        const fromVal = document.getElementById('filter-from').value;
+        const toVal = document.getElementById('filter-to').value;
+        const from = fromVal ? new Date(fromVal + 'T00:00:00') : null;
+        const to = toVal ? new Date(toVal + 'T23:59:59') : null;
+        return rows.filter(r => {
+          if (from && r._raw._date < from) return false;
+          if (to && r._raw._date > to) return false;
+          return true;
+        });
+      }
+      return rows; // all
+    }
+
+    function applyFilter() {
+      if (!allOrders.length) return;
+      const allRows = allOrders.map(normalize);
+      const rows = getFilteredRows(allRows);
+      renderKPIs(rows, false);
+      renderLineChart(allRows); // chart always shows full 7 days
+      renderDoughnutChart(rows);
+      // Sort before rendering table
+      const sortedRows = [...rows].sort((a, b) =>
+        sortOrder === 'desc' ? b._raw._date - a._raw._date : a._raw._date - b._raw._date
+      );
+      renderTable(sortedRows);
+      renderProducts(rows);
+      // Update filter label on chart
+      const labels = { today: 'Hôm nay', week: '7 ngày gần nhất', month: 'Tháng này', all: 'Tất cả', custom: 'Tuỳ chỉnh' };
+      document.getElementById('chart-period').textContent = labels[currentFilter] || '7 ngày gần nhất';
+    }
+
+    function renderKPIs(rows, isDemo) {
+      const total = rows.length;
+      const revenue = rows.reduce((s, r) => s + parsePrice(r.price), 0);
+      const cod = rows.reduce((s, r) => s + parsePrice(r.cod), 0);
+      const ship = rows.reduce((s, r) => s + parsePrice(r.ship), 0);
+      const avg = total ? Math.round(revenue / total) : 0;
+      const weight = rows.reduce((s, r) => s + parseWeight(r.weight), 0);
+      const totalLN = rows.reduce((s, r) => s + (parsePrice(r.price) - parsePrice(r.ship) - parsePrice(r.cod)), 0);
+      const avgLN = total ? Math.round(totalLN / total) : 0;
+
+      // ADS trong khoảng lọc
+      const adsData = getAdsData();
+      let adsInRange = adsData;
+      const now = new Date();
+      if (currentFilter === 'today') {
+        const ds = now.toISOString().split('T')[0];
+        adsInRange = adsData.filter(a => a.date === ds);
+      } else if (currentFilter === 'week') {
+        const from = new Date(); from.setDate(from.getDate() - 6); from.setHours(0, 0, 0, 0);
+        adsInRange = adsData.filter(a => new Date(a.date + 'T00:00:00') >= from);
+      } else if (currentFilter === 'month') {
+        const ms = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        adsInRange = adsData.filter(a => a.date.startsWith(ms));
+      } else if (currentFilter === 'custom') {
+        const fromVal = document.getElementById('filter-from').value;
+        const toVal = document.getElementById('filter-to').value;
+        adsInRange = adsData.filter(a => {
+          if (fromVal && a.date < fromVal) return false;
+          if (toVal && a.date > toVal) return false;
+          return true;
+        });
+      }
+      const totalAds = adsInRange.reduce((s, a) => s + a.amount, 0);
+      const laiTong = totalLN - totalAds;
+
+      // Lãi ngày (chỉ hiển thị khi filter = today)
+      const laiNgay = currentFilter === 'today' ? totalLN : 0;
+
+      document.getElementById('kpi-total').textContent = total;
+      const totalSubEl = document.getElementById('kpi-total-sub');
+      if (totalSubEl) totalSubEl.textContent = isDemo ? 'Demo data' : '↑ Thực tế';
+      document.getElementById('kpi-revenue').textContent = formatMoney(revenue);
+      document.getElementById('kpi-revenue-sub').textContent = `COD: ${formatMoney(cod)}đ · Ship: ${formatMoney(ship)}đ`;
+      document.getElementById('kpi-avg').textContent = formatMoney(avg);
+      document.getElementById('kpi-weight').textContent = weight.toFixed(1) + ' kg';
+
+      document.getElementById('kpi-lai-tong').textContent = formatMoney(laiTong) + 'đ';
+      document.getElementById('kpi-lai-tong').style.color = laiTong >= 0 ? 'var(--green)' : 'var(--red)';
+      document.getElementById('kpi-lai-tong-sub').textContent = `Lợi nhuận/đơn TB: ${formatMoney(avgLN)}đ`;
+
+      const laiNgayLabel = { today: 'Hôm nay', week: '7 ngày', month: 'Tháng này', all: 'Tổng', custom: 'Kỳ này' };
+      const laiNgayLabelEl = document.getElementById('kpi-lai-ngay-label');
+      if (laiNgayLabelEl) laiNgayLabelEl.textContent = `📈 Lãi ${laiNgayLabel[currentFilter] || ''}`;
+      document.getElementById('kpi-lai-ngay').textContent = formatMoney(totalLN) + 'đ';
+      document.getElementById('kpi-lai-ngay').style.color = totalLN >= 0 ? 'var(--accent)' : 'var(--red)';
+
+      document.getElementById('kpi-ads').textContent = formatMoney(totalAds) + 'đ';
+      document.getElementById('kpi-ads-sub').textContent = revenue
+        ? `${((totalAds / revenue) * 100).toFixed(1)}% doanh thu`
+        : `${adsInRange.length} khoản`;
+      document.getElementById('kpi-loi-nhuan-avg').textContent = formatMoney(avgLN) + 'đ';
+
+      // ── Sync mobile list ──
+      const laiNgayColor = totalLN >= 0 ? 'var(--accent)' : 'var(--red)';
+      const laiTongColor = laiTong >= 0 ? 'var(--green)' : 'var(--red)';
+      const adsSub = revenue ? `${((totalAds / revenue) * 100).toFixed(1)}% doanh thu` : `${adsInRange.length} khoản`;
+      const revSub = `COD: ${formatMoney(cod)}đ · Ship: ${formatMoney(ship)}đ`;
+      const setM = (id, val, color) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = val;
+        if (color) el.style.color = color;
+      };
+      setM('m-kpi-total', total);
+      setM('m-kpi-total-sub', isDemo ? 'Demo data' : '↑ Thực tế');
+      setM('m-kpi-revenue', formatMoney(revenue) + 'đ');
+      setM('m-kpi-revenue-sub', revSub);
+      setM('m-kpi-avg', formatMoney(avg) + 'đ');
+      setM('m-kpi-weight', weight.toFixed(1) + ' kg');
+      setM('m-kpi-lai-tong', formatMoney(laiTong) + 'đ', laiTongColor);
+      setM('m-kpi-lai-tong-sub', `LN/đơn TB: ${formatMoney(avgLN)}đ`);
+      setM('m-kpi-lai-ngay', formatMoney(totalLN) + 'đ', laiNgayColor);
+      setM('m-kpi-lai-ngay-label', `📈 Lãi ${laiNgayLabel[currentFilter] || ''}`);
+      setM('m-kpi-ads', formatMoney(totalAds) + 'đ');
+      setM('m-kpi-ads-sub', adsSub);
+      setM('m-kpi-loi-nhuan-avg', formatMoney(avgLN) + 'đ');
+    }
+
+    function processOrders(data, isDemo) {
+      allOrders = data;
+      applyFilter();
+      // Set isDemo flag on first load
+      if (isDemo) {
+        const sub = document.getElementById('kpi-total-sub');
+        if (sub) sub.textContent = 'Demo data';
       }
     }
-  });
-}
 
-// ── Doughnut chart ──
-function renderDoughnutChart(rows) {
-  const productMap = {};
-  rows.forEach(r => {
-    const p = r.product || 'Khác';
-    productMap[p] = (productMap[p] || 0) + parsePrice(r.price);
-  });
-  const sorted = Object.entries(productMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
-  const colors = ['#f0a050','#4f8ef7','#3ecf8e','#f05a5a','#b07ff0','#f0d050'];
-
-  if (doughnutChart) { doughnutChart.destroy(); }
-  const ctx = document.getElementById('chartDoughnut').getContext('2d');
-  doughnutChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: sorted.map(x=>x[0]),
-      datasets: [{
-        data: sorted.map(x=>x[1]),
-        backgroundColor: colors,
-        borderColor: '#151820',
-        borderWidth: 3,
-        hoverOffset: 6
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      cutout: '65%',
-      plugins: {
-        legend: { position: 'bottom', labels: { color: '#6b7280', font: { size: 11 }, padding: 12, boxWidth: 12 } },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${Number(ctx.raw).toLocaleString('vi-VN')} đ` } }
-      }
+    function formatMoney(n) {
+      if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+      if (n >= 1e3) return (n / 1e3).toFixed(0) + 'K';
+      return n.toLocaleString('vi-VN');
     }
-  });
-}
 
-// ── Table ──
-function renderTable(rows) {
-  filteredRows = rows;
-  currentPage = 1;
-  renderPage();
-}
+    // ── Line chart ──
+    function renderLineChart(rows) {
+      const days = 7;
+      const labels = [], counts = [], revenues = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0, 0, 0, 0);
+        const next = new Date(d); next.setDate(next.getDate() + 1);
+        labels.push(d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }));
+        const dayRows = rows.filter(r => r._raw._date >= d && r._raw._date < next);
+        counts.push(dayRows.length);
+        revenues.push(dayRows.reduce((s, r) => s + parsePrice(r.price), 0) / 1e3);
+      }
 
-function renderPage() {
-  const wrap = document.getElementById('tableWrap');
-  if (!wrap) return;
-  if (!filteredRows.length) {
-    wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có đơn hàng nào</div>';
-    return;
-  }
+      if (lineChart) { lineChart.destroy(); }
+      const ctx = document.getElementById('chartLine').getContext('2d');
+      lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Số đơn',
+              data: counts,
+              borderColor: '#f0a050',
+              backgroundColor: 'rgba(240,160,80,0.08)',
+              tension: 0.4, fill: true,
+              pointBackgroundColor: '#f0a050',
+              pointRadius: 4, pointHoverRadius: 6,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Doanh thu (K)',
+              data: revenues,
+              borderColor: '#4f8ef7',
+              backgroundColor: 'rgba(79,142,247,0.06)',
+              tension: 0.4, fill: true,
+              pointBackgroundColor: '#4f8ef7',
+              pointRadius: 4, pointHoverRadius: 6,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { labels: { color: '#6b7280', font: { size: 11 } } } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', font: { size: 11 } } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b7280', font: { size: 11 } }, position: 'left' },
+            y1: { grid: { drawOnChartArea: false }, ticks: { color: '#4f8ef7', font: { size: 11 } }, position: 'right' }
+          }
+        }
+      });
+    }
 
-  const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const rows = filteredRows.slice(start, start + PAGE_SIZE);
+    // ── Doughnut chart ──
+    function renderDoughnutChart(rows) {
+      const productMap = {};
+      rows.forEach(r => {
+        const p = r.product || 'Khác';
+        productMap[p] = (productMap[p] || 0) + parsePrice(r.price);
+      });
+      const sorted = Object.entries(productMap).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      const colors = ['#f0a050', '#4f8ef7', '#3ecf8e', '#f05a5a', '#b07ff0', '#f0d050'];
 
-  // ── Desktop table ──
-  let tableHtml = `<div class="desktop-table"><table>
+      if (doughnutChart) { doughnutChart.destroy(); }
+      const ctx = document.getElementById('chartDoughnut').getContext('2d');
+      doughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: sorted.map(x => x[0]),
+          datasets: [{
+            data: sorted.map(x => x[1]),
+            backgroundColor: colors,
+            borderColor: '#151820',
+            borderWidth: 3,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#6b7280', font: { size: 11 }, padding: 12, boxWidth: 12 } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${Number(ctx.raw).toLocaleString('vi-VN')} đ` } }
+          }
+        }
+      });
+    }
+
+    // ── Table ──
+    function renderTable(rows) {
+      filteredRows = rows;
+      currentPage = 1;
+      renderPage();
+    }
+
+    function renderPage() {
+      const wrap = document.getElementById('tableWrap');
+      if (!wrap) return;
+      if (!filteredRows.length) {
+        wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có đơn hàng nào</div>';
+        return;
+      }
+
+      const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const rows = filteredRows.slice(start, start + PAGE_SIZE);
+
+      // ── Desktop table ──
+      let tableHtml = `<div class="desktop-table"><table>
     <thead><tr>
       <th>#</th><th>Họ tên</th><th>SĐT</th><th>Địa chỉ</th>
       <th>Sản phẩm</th><th>Giá</th><th>COD</th><th>Phí ship</th>
       <th>Lợi nhuận/đơn</th><th>Cân nặng</th><th>Thời gian</th>
     </tr></thead><tbody>`;
 
-  // ── Mobile cards ──
-  let cardsHtml = `<div class="mobile-cards">`;
+      // ── Mobile cards ──
+      let cardsHtml = `<div class="mobile-cards">`;
 
-  rows.forEach((r, i) => {
-    const globalIndex = start + i + 1;
-    const price = parsePrice(r.price);
-    const cod   = parsePrice(r.cod);
-    const ship  = parsePrice(r.ship);
-    const ln    = price - ship - cod;
-    const lnColor = ln > 0 ? 'profit-positive' : ln < 0 ? 'profit-negative' : '';
+      rows.forEach((r, i) => {
+        const globalIndex = start + i + 1;
+        const price = parsePrice(r.price);
+        const cod = parsePrice(r.cod);
+        const ship = parsePrice(r.ship);
+        const ln = price - ship - cod;
+        const lnColor = ln > 0 ? 'profit-positive' : ln < 0 ? 'profit-negative' : '';
 
-    // Desktop row
-    tableHtml += `<tr>
+        // Desktop row
+        tableHtml += `<tr>
       <td style="color:var(--muted)">${globalIndex}</td>
-      <td class="td-name">${r.name||'—'}</td>
-      <td>${r.phone||'—'}</td>
-      <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.address||''}">${r.address||'—'}</td>
-      <td><span class="td-product">${r.product||'—'}</span></td>
-      <td class="td-price">${price ? price.toLocaleString('vi-VN')+'đ' : '—'}</td>
-      <td style="color:var(--green);font-weight:600">${cod ? cod.toLocaleString('vi-VN')+'đ' : '—'}</td>
-      <td style="color:var(--muted)">${ship ? ship.toLocaleString('vi-VN')+'đ' : '—'}</td>
-      <td style="color:${ln>0?'var(--green)':ln<0?'var(--red)':'var(--muted)'};font-weight:700">${ln ? ln.toLocaleString('vi-VN')+'đ' : '—'}</td>
-      <td>${r.weight||'—'} kg</td>
-      <td class="td-time">${r.time||'—'}</td>
+      <td class="td-name">${r.name || '—'}</td>
+      <td>${r.phone || '—'}</td>
+      <td style="max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${r.address || ''}">${r.address || '—'}</td>
+      <td><span class="td-product">${r.product || '—'}</span></td>
+      <td class="td-price">${price ? price.toLocaleString('vi-VN') + 'đ' : '—'}</td>
+      <td style="color:var(--green);font-weight:600">${cod ? cod.toLocaleString('vi-VN') + 'đ' : '—'}</td>
+      <td style="color:var(--muted)">${ship ? ship.toLocaleString('vi-VN') + 'đ' : '—'}</td>
+      <td style="color:${ln > 0 ? 'var(--green)' : ln < 0 ? 'var(--red)' : 'var(--muted)'};font-weight:700">${ln ? ln.toLocaleString('vi-VN') + 'đ' : '—'}</td>
+      <td>${r.weight || '—'} kg</td>
+      <td class="td-time">${r.time || '—'}</td>
     </tr>`;
 
-    // Mobile card
-    cardsHtml += `<div class="order-card">
+        // Mobile card
+        cardsHtml += `<div class="order-card">
       <span class="order-num">#${globalIndex}</span>
       <div class="order-card-top">
         <div>
-          <div class="order-card-name">${r.name||'—'}</div>
-          <div class="order-card-time">${r.time||'—'}</div>
+          <div class="order-card-name">${r.name || '—'}</div>
+          <div class="order-card-time">${r.time || '—'}</div>
         </div>
-        <div class="order-card-price">${price ? price.toLocaleString('vi-VN')+'đ' : '—'}</div>
+        <div class="order-card-price">${price ? price.toLocaleString('vi-VN') + 'đ' : '—'}</div>
       </div>
       <div class="order-card-row">
-        <span class="order-card-badge">${r.product||'—'}</span>
+        <span class="order-card-badge">${r.product || '—'}</span>
         ${r.weight ? `<span style="font-size:11px;color:var(--muted);padding:3px 6px">⚖ ${r.weight} kg</span>` : ''}
       </div>
       <div class="order-card-grid">
         <div class="order-card-stat">
           <div class="lbl">COD</div>
-          <div class="val" style="color:var(--green)">${cod ? cod.toLocaleString('vi-VN')+'đ' : '—'}</div>
+          <div class="val" style="color:var(--green)">${cod ? cod.toLocaleString('vi-VN') + 'đ' : '—'}</div>
         </div>
         <div class="order-card-stat">
           <div class="lbl">Phí ship</div>
-          <div class="val" style="color:var(--muted)">${ship ? ship.toLocaleString('vi-VN')+'đ' : '—'}</div>
+          <div class="val" style="color:var(--muted)">${ship ? ship.toLocaleString('vi-VN') + 'đ' : '—'}</div>
         </div>
         <div class="order-card-stat">
           <div class="lbl">Lợi nhuận</div>
-          <div class="val ${lnColor}">${ln ? ln.toLocaleString('vi-VN')+'đ' : '—'}</div>
+          <div class="val ${lnColor}">${ln ? ln.toLocaleString('vi-VN') + 'đ' : '—'}</div>
         </div>
       </div>
-      <div class="order-card-phone">📞 <a href="tel:${r.phone}">${r.phone||'—'}</a></div>
+      <div class="order-card-phone">📞 <a href="tel:${r.phone}">${r.phone || '—'}</a></div>
       ${r.address ? `<div class="order-card-addr">📍 ${r.address}</div>` : ''}
     </div>`;
-  });
+      });
 
-  tableHtml += '</tbody></table></div>';
-  cardsHtml += '</div>';
+      tableHtml += '</tbody></table></div>';
+      cardsHtml += '</div>';
 
-  // ── Pagination UI ──
-  let paginationHtml = '';
-  if (totalPages > 1) {
-    paginationHtml = `
+      // ── Pagination UI ──
+      let paginationHtml = '';
+      if (totalPages > 1) {
+        paginationHtml = `
     <div class="pagination">
-      <button onclick="goToPage(1)" ${currentPage===1?'disabled':''}>«</button>
-      <button onclick="goToPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹ Trước</button>
+      <button onclick="goToPage(1)" ${currentPage === 1 ? 'disabled' : ''}>«</button>
+      <button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹ Trước</button>
       <div class="page-info">Trang <span>${currentPage}</span> / <span>${totalPages}</span> &nbsp;·&nbsp; ${filteredRows.length} đơn</div>
-      <button onclick="goToPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Sau ›</button>
-      <button onclick="goToPage(${totalPages})" ${currentPage===totalPages?'disabled':''}>»</button>
+      <button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Sau ›</button>
+      <button onclick="goToPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>»</button>
     </div>`;
-  }
+      }
 
-  wrap.innerHTML = tableHtml + cardsHtml + paginationHtml;
-}
+      wrap.innerHTML = tableHtml + cardsHtml + paginationHtml;
+    }
 
-function goToPage(page) {
-  const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
-  currentPage = Math.max(1, Math.min(page, totalPages));
-  renderPage();
-  const orderTable = document.getElementById('orderTable');
-  if (orderTable) orderTable.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+    function goToPage(page) {
+      const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE);
+      currentPage = Math.max(1, Math.min(page, totalPages));
+      renderPage();
+      const orderTable = document.getElementById('orderTable');
+      if (orderTable) orderTable.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
-let sortOrder = 'desc'; // desc = mới nhất trước
-let currentPage = 1;
-const PAGE_SIZE = 50;
-let filteredRows = [];
+    let sortOrder = 'desc'; // desc = mới nhất trước
+    let currentPage = 1;
+    const PAGE_SIZE = 50;
+    let filteredRows = [];
 
-function toggleSort() {
-  sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
-  const btn = document.getElementById('sortBtn');
-  document.getElementById('sortIcon').textContent  = sortOrder === 'desc' ? '↓' : '↑';
-  document.getElementById('sortLabel').textContent = sortOrder === 'desc' ? 'Mới nhất' : 'Cũ nhất';
-  btn.className = 'sort-btn ' + sortOrder;
-  filterTable();
-}
+    function toggleSort() {
+      sortOrder = sortOrder === 'desc' ? 'asc' : 'desc';
+      const btn = document.getElementById('sortBtn');
+      document.getElementById('sortIcon').textContent = sortOrder === 'desc' ? '↓' : '↑';
+      document.getElementById('sortLabel').textContent = sortOrder === 'desc' ? 'Mới nhất' : 'Cũ nhất';
+      btn.className = 'sort-btn ' + sortOrder;
+      filterTable();
+    }
 
-function filterTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const rows = allOrders.map(normalize);
-  let filtered = q
-    ? rows.filter(r =>
-        r.name.toLowerCase().includes(q) ||
-        r.phone.includes(q) ||
-        r.product.toLowerCase().includes(q)
-      )
-    : rows;
-  // Sort by date
-  filtered = [...filtered].sort((a, b) =>
-    sortOrder === 'desc'
-      ? b._raw._date - a._raw._date
-      : a._raw._date - b._raw._date
-  );
-  renderTable(filtered);
-}
+    function filterTable() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const rows = allOrders.map(normalize);
+      let filtered = q
+        ? rows.filter(r =>
+          r.name.toLowerCase().includes(q) ||
+          r.phone.includes(q) ||
+          r.product.toLowerCase().includes(q)
+        )
+        : rows;
+      // Sort by date
+      filtered = [...filtered].sort((a, b) =>
+        sortOrder === 'desc'
+          ? b._raw._date - a._raw._date
+          : a._raw._date - b._raw._date
+      );
+      renderTable(filtered);
+    }
 
-// ── Products ──
-function renderProducts(rows) {
-  const map = {};
-  rows.forEach(r => {
-    const p = r.product || 'Khác';
-    if (!map[p]) map[p] = { count: 0, revenue: 0 };
-    map[p].count++;
-    map[p].revenue += parsePrice(r.price);
-  });
-  const sorted = Object.entries(map).sort((a,b) => b[1].count - a[1].count);
-  const grid = document.getElementById('productsGrid');
-  if (!grid) return;
-  if (!sorted.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📦</div>Không có dữ liệu</div>';
-    return;
-  }
-  grid.innerHTML = sorted.map(([name, s]) => `
+    // ── Products ──
+    function renderProducts(rows) {
+      const map = {};
+      rows.forEach(r => {
+        const p = r.product || 'Khác';
+        if (!map[p]) map[p] = { count: 0, revenue: 0 };
+        map[p].count++;
+        map[p].revenue += parsePrice(r.price);
+      });
+      const sorted = Object.entries(map).sort((a, b) => b[1].count - a[1].count);
+      const grid = document.getElementById('productsGrid');
+      if (!grid) return;
+      if (!sorted.length) {
+        grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">📦</div>Không có dữ liệu</div>';
+        return;
+      }
+      grid.innerHTML = sorted.map(([name, s]) => `
     <div class="product-chip">
       <div class="name" title="${name}">${name}</div>
       <div class="count">${s.count}</div>
       <div class="sub">đơn · ${formatMoney(s.revenue)}đ</div>
     </div>
   `).join('');
-}
+    }
 
-function scrollToTable() { showPage('dashboard'); setTimeout(()=>document.getElementById('orderTable').scrollIntoView({behavior:'smooth'}),100); }
-function scrollToProducts() { showPage('dashboard'); setTimeout(()=>document.getElementById('productSection').scrollIntoView({behavior:'smooth'}),100); }
+    function scrollToTable() { showPage('dashboard'); setTimeout(() => document.getElementById('orderTable').scrollIntoView({ behavior: 'smooth' }), 100); }
+    function scrollToProducts() { showPage('dashboard'); setTimeout(() => document.getElementById('productSection').scrollIntoView({ behavior: 'smooth' }), 100); }
 
-// ═══════════════════════════════════════
-//  PAGE SWITCHING
-// ═══════════════════════════════════════
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  const navMap = { dashboard: 'nav-dashboard', ads: 'nav-ads' };
-  if (navMap[name]) document.getElementById(navMap[name]).classList.add('active');
-  if (name === 'ads') renderAdsPage();
+    // ═══════════════════════════════════════
+    //  PAGE SWITCHING
+    // ═══════════════════════════════════════
+    function showPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      const navMap = { dashboard: 'nav-dashboard', ads: 'nav-ads' };
+      if (navMap[name]) document.getElementById(navMap[name]).classList.add('active');
+      if (name === 'ads') renderAdsPage();
 
-  // Sync bottom nav
-  document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
-  const bnMap = { dashboard: 'bn-dashboard', ads: 'bn-ads' };
-  if (bnMap[name]) document.getElementById(bnMap[name]).classList.add('active');
-}
+      // Sync bottom nav
+      document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+      const bnMap = { dashboard: 'bn-dashboard', ads: 'bn-ads' };
+      if (bnMap[name]) document.getElementById(bnMap[name]).classList.add('active');
+    }
 
-// ═══════════════════════════════════════
-//  ADS MANAGEMENT
-// ═══════════════════════════════════════
-// ═══════════════════════════════════════
-//  FACEBOOK ADS API — MULTI ACCOUNT
-// ═══════════════════════════════════════
-const FB_API_VER     = 'v19.0';
-const FB_ACCOUNTS_KEY = 'admin_fb_accounts';
+    // ═══════════════════════════════════════
+    //  ADS MANAGEMENT
+    // ═══════════════════════════════════════
+    // ═══════════════════════════════════════
+    //  FACEBOOK ADS API — MULTI ACCOUNT
+    // ═══════════════════════════════════════
+    const FB_API_VER = 'v19.0';
+    const FB_ACCOUNTS_KEY = 'admin_fb_accounts';
 
-function getFbAccounts() {
-  try { return JSON.parse(localStorage.getItem(FB_ACCOUNTS_KEY)) || []; } catch { return []; }
-}
-function saveFbAccounts(list) { localStorage.setItem(FB_ACCOUNTS_KEY, JSON.stringify(list)); }
+    function getFbAccounts() {
+      try { return JSON.parse(localStorage.getItem(FB_ACCOUNTS_KEY)) || []; } catch { return []; }
+    }
+    function saveFbAccounts(list) { localStorage.setItem(FB_ACCOUNTS_KEY, JSON.stringify(list)); }
 
-// ── Modal helpers ──
-function openFbAccountModal() {
-  document.getElementById('fb-acc-name').value  = '';
-  document.getElementById('fb-acc-id').value    = '';
-  document.getElementById('fb-acc-token').value = '';
-  document.getElementById('fbAccountModal').classList.add('show');
-}
-function closeFbAccountModal() {
-  document.getElementById('fbAccountModal').classList.remove('show');
-}
-function closeFbModalOutside(e) {
-  if (e.target === document.getElementById('fbAccountModal')) closeFbAccountModal();
-}
+    // ── Modal helpers ──
+    function openFbAccountModal() {
+      document.getElementById('fb-acc-name').value = '';
+      document.getElementById('fb-acc-id').value = '';
+      document.getElementById('fb-acc-token').value = '';
+      document.getElementById('fbAccountModal').classList.add('show');
+    }
+    function closeFbAccountModal() {
+      document.getElementById('fbAccountModal').classList.remove('show');
+    }
+    function closeFbModalOutside(e) {
+      if (e.target === document.getElementById('fbAccountModal')) closeFbAccountModal();
+    }
 
-function saveFbAccount() {
-  const name  = document.getElementById('fb-acc-name').value.trim();
-  const accId = document.getElementById('fb-acc-id').value.trim();
-  const token = document.getElementById('fb-acc-token').value.trim();
+    function saveFbAccount() {
+      const name = document.getElementById('fb-acc-name').value.trim();
+      const accId = document.getElementById('fb-acc-id').value.trim();
+      const token = document.getElementById('fb-acc-token').value.trim();
 
-  if (!name)  { alert('Vui lòng nhập tên tài khoản!'); return; }
-  if (!accId) { alert('Vui lòng nhập Ad Account ID!'); return; }
-  if (!token) { alert('Vui lòng nhập Access Token!'); return; }
+      if (!name) { alert('Vui lòng nhập tên tài khoản!'); return; }
+      if (!accId) { alert('Vui lòng nhập Ad Account ID!'); return; }
+      if (!token) { alert('Vui lòng nhập Access Token!'); return; }
 
-  // Normalize: ensure starts with act_
-  const normalizedId = accId.startsWith('act_') ? accId : 'act_' + accId;
+      // Normalize: ensure starts with act_
+      const normalizedId = accId.startsWith('act_') ? accId : 'act_' + accId;
 
-  const accounts = getFbAccounts();
-  accounts.push({ id: Date.now(), name, accId: normalizedId, token });
-  saveFbAccounts(accounts);
-  closeFbAccountModal();
-  renderFbAccounts();
-}
+      const accounts = getFbAccounts();
+      accounts.push({ id: Date.now(), name, accId: normalizedId, token });
+      saveFbAccounts(accounts);
+      closeFbAccountModal();
+      renderFbAccounts();
+    }
 
-function deleteFbAccount(id) {
-  if (!confirm('Xoá tài khoản này?')) return;
-  const updated = getFbAccounts().filter(a => a.id !== id);
-  saveFbAccounts(updated);
-  renderFbAccounts();
-}
+    function deleteFbAccount(id) {
+      if (!confirm('Xoá tài khoản này?')) return;
+      const updated = getFbAccounts().filter(a => a.id !== id);
+      saveFbAccounts(updated);
+      renderFbAccounts();
+    }
 
-function renderFbAccounts() {
-  const accounts = getFbAccounts();
-  const list = document.getElementById('fbAccountsList');
-  const sel  = document.getElementById('fb-account-select');
+    function renderFbAccounts() {
+      const accounts = getFbAccounts();
+      const list = document.getElementById('fbAccountsList');
+      const sel = document.getElementById('fb-account-select');
 
-  // Update dropdown
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">— Chọn tài khoản —</option>';
-  accounts.forEach(a => {
-    const opt = document.createElement('option');
-    opt.value = a.id;
-    opt.textContent = a.name + ' (' + a.accId + ')';
-    sel.appendChild(opt);
-  });
-  // Restore selection if still exists
-  if (prev && accounts.find(a => String(a.id) === prev)) sel.value = prev;
+      // Update dropdown
+      const prev = sel.value;
+      sel.innerHTML = '<option value="">— Chọn tài khoản —</option>';
+      accounts.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = a.name + ' (' + a.accId + ')';
+        sel.appendChild(opt);
+      });
+      // Restore selection if still exists
+      if (prev && accounts.find(a => String(a.id) === prev)) sel.value = prev;
 
-  // Update list UI
-  if (!accounts.length) {
-    list.innerHTML = '<div class="fb-empty">Chưa có tài khoản nào. Nhấn "+ Thêm tài khoản" để bắt đầu.</div>';
-    return;
-  }
-  list.innerHTML = accounts.map(a => `
+      // Update list UI
+      if (!accounts.length) {
+        list.innerHTML = '<div class="fb-empty">Chưa có tài khoản nào. Nhấn "+ Thêm tài khoản" để bắt đầu.</div>';
+        return;
+      }
+      list.innerHTML = accounts.map(a => `
     <div class="fb-account-item" id="fb-item-${a.id}">
       <div class="fb-account-info">
         <div class="fb-account-name">
@@ -1986,203 +3074,203 @@ function renderFbAccounts() {
           ${escHtml(a.name)}
         </div>
         <div class="fb-account-id">${escHtml(a.accId)}</div>
-        <div class="fb-account-token-preview">Token: ${a.token.substring(0,20)}…</div>
+        <div class="fb-account-token-preview">Token: ${a.token.substring(0, 20)}…</div>
       </div>
       <button class="fb-account-del" onclick="deleteFbAccount(${a.id})" title="Xoá tài khoản">✕</button>
     </div>
   `).join('');
-}
-
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-async function syncFbAds() {
-  const fromEl  = document.getElementById('fb-date-from');
-  const toEl    = document.getElementById('fb-date-to');
-  const status  = document.getElementById('fb-sync-status');
-  const btn     = document.getElementById('fbSyncBtn');
-  const selVal  = document.getElementById('fb-account-select').value;
-
-  const from = fromEl.value;
-  const to   = toEl.value;
-
-  if (!selVal) {
-    status.style.color = 'var(--red)';
-    status.textContent = '⚠ Vui lòng chọn tài khoản quảng cáo.';
-    return;
-  }
-  if (!from || !to) {
-    status.style.color = 'var(--red)';
-    status.textContent = '⚠ Vui lòng chọn khoảng ngày cần đồng bộ.';
-    return;
-  }
-  if (from > to) {
-    status.style.color = 'var(--red)';
-    status.textContent = '⚠ Ngày bắt đầu phải nhỏ hơn ngày kết thúc.';
-    return;
-  }
-
-  const account = getFbAccounts().find(a => String(a.id) === selVal);
-  if (!account) {
-    status.style.color = 'var(--red)';
-    status.textContent = '⚠ Tài khoản không tồn tại.';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = '⏳ Đang tải...';
-  status.style.color = 'var(--muted)';
-  status.textContent = `Đang kết nối tài khoản "${account.name}"...`;
-
-  try {
-    const url = `https://graph.facebook.com/${FB_API_VER}/${account.accId}/insights`
-      + `?fields=date_start,spend`
-      + `&time_range=${encodeURIComponent(JSON.stringify({ since: from, until: to }))}`
-      + `&time_increment=1`
-      + `&access_token=${account.token}`;
-
-    const res  = await fetch(url);
-    const json = await res.json();
-
-    if (json.error) {
-      status.style.color = 'var(--red)';
-      status.textContent = '❌ Lỗi FB API: ' + json.error.message;
-      return;
     }
 
-    const fbData = json.data || [];
-    if (!fbData.length) {
-      status.style.color = 'var(--accent)';
-      status.textContent = '⚠ Không có dữ liệu chi tiêu trong khoảng thời gian này.';
-      return;
+    function escHtml(s) {
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // Merge into local ADS data (overwrite FB entries for this account & date range)
-    let localData = getAdsData().filter(r =>
-      !(r.fromFB && r.fbAccountId === account.id && r.date >= from && r.date <= to)
-    );
+    async function syncFbAds() {
+      const fromEl = document.getElementById('fb-date-from');
+      const toEl = document.getElementById('fb-date-to');
+      const status = document.getElementById('fb-sync-status');
+      const btn = document.getElementById('fbSyncBtn');
+      const selVal = document.getElementById('fb-account-select').value;
 
-    let addedCount = 0;
-    fbData.forEach(d => {
-      const spend = Math.round(parseFloat(d.spend || 0));
-      if (spend <= 0) return;
-      localData.unshift({
-        id: 'fb_' + account.id + '_' + d.date_start,
-        date: d.date_start,
-        note: '📘 ' + account.name,
-        amount: spend,
-        fromFB: true,
-        fbAccountId: account.id
-      });
-      addedCount++;
+      const from = fromEl.value;
+      const to = toEl.value;
+
+      if (!selVal) {
+        status.style.color = 'var(--red)';
+        status.textContent = '⚠ Vui lòng chọn tài khoản quảng cáo.';
+        return;
+      }
+      if (!from || !to) {
+        status.style.color = 'var(--red)';
+        status.textContent = '⚠ Vui lòng chọn khoảng ngày cần đồng bộ.';
+        return;
+      }
+      if (from > to) {
+        status.style.color = 'var(--red)';
+        status.textContent = '⚠ Ngày bắt đầu phải nhỏ hơn ngày kết thúc.';
+        return;
+      }
+
+      const account = getFbAccounts().find(a => String(a.id) === selVal);
+      if (!account) {
+        status.style.color = 'var(--red)';
+        status.textContent = '⚠ Tài khoản không tồn tại.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Đang tải...';
+      status.style.color = 'var(--muted)';
+      status.textContent = `Đang kết nối tài khoản "${account.name}"...`;
+
+      try {
+        const url = `https://graph.facebook.com/${FB_API_VER}/${account.accId}/insights`
+          + `?fields=date_start,spend`
+          + `&time_range=${encodeURIComponent(JSON.stringify({ since: from, until: to }))}`
+          + `&time_increment=1`
+          + `&access_token=${account.token}`;
+
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.error) {
+          status.style.color = 'var(--red)';
+          status.textContent = '❌ Lỗi FB API: ' + json.error.message;
+          return;
+        }
+
+        const fbData = json.data || [];
+        if (!fbData.length) {
+          status.style.color = 'var(--accent)';
+          status.textContent = '⚠ Không có dữ liệu chi tiêu trong khoảng thời gian này.';
+          return;
+        }
+
+        // Merge into local ADS data (overwrite FB entries for this account & date range)
+        let localData = getAdsData().filter(r =>
+          !(r.fromFB && r.fbAccountId === account.id && r.date >= from && r.date <= to)
+        );
+
+        let addedCount = 0;
+        fbData.forEach(d => {
+          const spend = Math.round(parseFloat(d.spend || 0));
+          if (spend <= 0) return;
+          localData.unshift({
+            id: 'fb_' + account.id + '_' + d.date_start,
+            date: d.date_start,
+            note: '📘 ' + account.name,
+            amount: spend,
+            fromFB: true,
+            fbAccountId: account.id
+          });
+          addedCount++;
+        });
+
+        localData.sort((a, b) => b.date.localeCompare(a.date));
+        saveAdsData(localData);
+        renderAdsPage();
+        updateAdsKpi();
+
+        status.style.color = 'var(--green)';
+        status.textContent = `✅ Đã đồng bộ ${addedCount} ngày từ "${account.name}" (${from} → ${to})`;
+
+      } catch (err) {
+        status.style.color = 'var(--red)';
+        status.textContent = '❌ Lỗi kết nối: ' + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '⟳ Đồng bộ FB';
+      }
+    }
+
+    const ADS_KEY = 'admin_ads_data';
+
+    function getAdsData() {
+      try { return JSON.parse(localStorage.getItem(ADS_KEY)) || []; } catch { return []; }
+    }
+    function saveAdsData(data) { localStorage.setItem(ADS_KEY, JSON.stringify(data)); }
+
+    // Set today's date as default
+    document.addEventListener('DOMContentLoaded', () => {
+      const todayVal = new Date().toISOString().split('T')[0];
+      document.getElementById('ads-date').value = todayVal;
+      // FB sync default: từ đầu tháng đến hôm nay
+      const now = new Date();
+      const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+      document.getElementById('fb-date-from').value = firstOfMonth;
+      document.getElementById('fb-date-to').value = todayVal;
+      // Render FB accounts
+      renderFbAccounts();
     });
 
-    localData.sort((a, b) => b.date.localeCompare(a.date));
-    saveAdsData(localData);
-    renderAdsPage();
-    updateAdsKpi();
+    // Format amount input
+    document.getElementById('ads-amount').addEventListener('input', function () {
+      let v = this.value.replace(/\D/g, '');
+      this.value = v ? Number(v).toLocaleString('vi-VN') : '';
+    });
 
-    status.style.color = 'var(--green)';
-    status.textContent = `✅ Đã đồng bộ ${addedCount} ngày từ "${account.name}" (${from} → ${to})`;
+    function addAds() {
+      const date = document.getElementById('ads-date').value;
+      const note = document.getElementById('ads-note').value.trim();
+      const amount = parseInt(document.getElementById('ads-amount').value.replace(/\D/g, ''));
 
-  } catch (err) {
-    status.style.color = 'var(--red)';
-    status.textContent = '❌ Lỗi kết nối: ' + err.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '⟳ Đồng bộ FB';
-  }
-}
+      if (!date) { alert('Vui lòng chọn ngày!'); return; }
+      if (!amount) { alert('Vui lòng nhập số tiền!'); return; }
 
-const ADS_KEY = 'admin_ads_data';
+      const data = getAdsData();
+      data.unshift({ id: Date.now(), date, note: note || 'ADS', amount });
+      saveAdsData(data);
 
-function getAdsData() {
-  try { return JSON.parse(localStorage.getItem(ADS_KEY)) || []; } catch { return []; }
-}
-function saveAdsData(data) { localStorage.setItem(ADS_KEY, JSON.stringify(data)); }
+      // Reset form
+      document.getElementById('ads-note').value = '';
+      document.getElementById('ads-amount').value = '';
 
-// Set today's date as default
-document.addEventListener('DOMContentLoaded', () => {
-  const todayVal = new Date().toISOString().split('T')[0];
-  document.getElementById('ads-date').value = todayVal;
-  // FB sync default: từ đầu tháng đến hôm nay
-  const now = new Date();
-  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-  document.getElementById('fb-date-from').value = firstOfMonth;
-  document.getElementById('fb-date-to').value   = todayVal;
-  // Render FB accounts
-  renderFbAccounts();
-});
+      renderAdsPage();
 
-// Format amount input
-document.getElementById('ads-amount').addEventListener('input', function() {
-  let v = this.value.replace(/\D/g,'');
-  this.value = v ? Number(v).toLocaleString('vi-VN') : '';
-});
+      // Update KPI on dashboard if visible
+      updateAdsKpi();
+    }
 
-function addAds() {
-  const date   = document.getElementById('ads-date').value;
-  const note   = document.getElementById('ads-note').value.trim();
-  const amount = parseInt(document.getElementById('ads-amount').value.replace(/\D/g,''));
+    function deleteAds(id) {
+      const data = getAdsData().filter(r => r.id !== id);
+      saveAdsData(data);
+      renderAdsPage();
+      updateAdsKpi();
+    }
 
-  if (!date)   { alert('Vui lòng chọn ngày!'); return; }
-  if (!amount) { alert('Vui lòng nhập số tiền!'); return; }
+    function clearAllAds() {
+      if (!confirm('Xoá tất cả lịch sử ADS?')) return;
+      saveAdsData([]);
+      renderAdsPage();
+      updateAdsKpi();
+    }
 
-  const data = getAdsData();
-  data.unshift({ id: Date.now(), date, note: note || 'ADS', amount });
-  saveAdsData(data);
+    function updateAdsKpi() {
+      if (allOrders.length) applyFilter();
+    }
 
-  // Reset form
-  document.getElementById('ads-note').value = '';
-  document.getElementById('ads-amount').value = '';
+    function renderAdsPage() {
+      const data = getAdsData();
+      const now = new Date();
+      const todayStr = now.toISOString().split('T')[0];
+      const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-  renderAdsPage();
+      const total = data.reduce((s, r) => s + r.amount, 0);
+      const todayTotal = data.filter(r => r.date === todayStr).reduce((s, r) => s + r.amount, 0);
+      const monthTotal = data.filter(r => r.date.startsWith(monthStr)).reduce((s, r) => s + r.amount, 0);
 
-  // Update KPI on dashboard if visible
-  updateAdsKpi();
-}
+      document.getElementById('ads-sum-total').textContent = total.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('ads-sum-today').textContent = todayTotal.toLocaleString('vi-VN') + 'đ';
+      document.getElementById('ads-sum-month').textContent = monthTotal.toLocaleString('vi-VN') + 'đ';
 
-function deleteAds(id) {
-  const data = getAdsData().filter(r => r.id !== id);
-  saveAdsData(data);
-  renderAdsPage();
-  updateAdsKpi();
-}
+      const wrap = document.getElementById('adsTableWrap');
+      if (!data.length) {
+        wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có dữ liệu ADS. Thêm khoản đầu tiên ở trên!</div>';
+        return;
+      }
 
-function clearAllAds() {
-  if (!confirm('Xoá tất cả lịch sử ADS?')) return;
-  saveAdsData([]);
-  renderAdsPage();
-  updateAdsKpi();
-}
-
-function updateAdsKpi() {
-  if (allOrders.length) applyFilter();
-}
-
-function renderAdsPage() {
-  const data = getAdsData();
-  const now  = new Date();
-  const todayStr  = now.toISOString().split('T')[0];
-  const monthStr  = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-
-  const total      = data.reduce((s,r) => s + r.amount, 0);
-  const todayTotal = data.filter(r => r.date === todayStr).reduce((s,r) => s + r.amount, 0);
-  const monthTotal = data.filter(r => r.date.startsWith(monthStr)).reduce((s,r) => s + r.amount, 0);
-
-  document.getElementById('ads-sum-total').textContent = total.toLocaleString('vi-VN') + 'đ';
-  document.getElementById('ads-sum-today').textContent = todayTotal.toLocaleString('vi-VN') + 'đ';
-  document.getElementById('ads-sum-month').textContent = monthTotal.toLocaleString('vi-VN') + 'đ';
-
-  const wrap = document.getElementById('adsTableWrap');
-  if (!data.length) {
-    wrap.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Chưa có dữ liệu ADS. Thêm khoản đầu tiên ở trên!</div>';
-    return;
-  }
-
-  // Group by date for display
-  let html = `<table class="ads-table">
+      // Group by date for display
+      let html = `<table class="ads-table">
     <thead><tr>
       <th>Ngày</th>
       <th>Ghi chú</th>
@@ -2190,12 +3278,12 @@ function renderAdsPage() {
       <th></th>
     </tr></thead><tbody>`;
 
-  data.forEach(r => {
-    const d = new Date(r.date + 'T00:00:00');
-    const dateLabel = d.toLocaleDateString('vi-VN', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'});
-    const isToday = r.date === todayStr;
-    const fbBadge = r.fromFB ? '<span style="margin-left:8px;font-size:10px;background:rgba(24,119,242,0.15);color:#4f8ef7;padding:2px 6px;border-radius:10px;font-weight:600">AUTO</span>' : '';
-    html += `<tr>
+      data.forEach(r => {
+        const d = new Date(r.date + 'T00:00:00');
+        const dateLabel = d.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit', year: 'numeric' });
+        const isToday = r.date === todayStr;
+        const fbBadge = r.fromFB ? '<span style="margin-left:8px;font-size:10px;background:rgba(24,119,242,0.15);color:#4f8ef7;padding:2px 6px;border-radius:10px;font-weight:600">AUTO</span>' : '';
+        html += `<tr>
       <td>
         <span style="color:var(--text);font-weight:600">${dateLabel}</span>
         ${isToday ? '<span style="margin-left:8px;font-size:10px;background:rgba(240,160,80,0.15);color:var(--accent);padding:2px 6px;border-radius:10px;font-weight:600">Hôm nay</span>' : ''}
@@ -2206,47 +3294,48 @@ function renderAdsPage() {
       </td>
       <td><button class="ads-del" onclick="deleteAds(${r.id})" title="Xoá">✕</button></td>
     </tr>`;
-  });
+      });
 
-  html += '</tbody></table>';
-  wrap.innerHTML = html;
-}
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
+    }
 
-// ── KPI Carousel dots ──
-function initKpiDots() {
-  const dots = document.getElementById('kpiDots');
-  if (!dots) return;
-  const isMobile = window.innerWidth <= 768;
-  if (!isMobile) { dots.innerHTML = ''; return; }
-  const cards = document.querySelectorAll('.kpi-card');
-  dots.innerHTML = Array.from(cards).map((_,i) =>
-    `<div class="kpi-dot${i===0?' active':''}" onclick="scrollToKpi(${i})"></div>`
-  ).join('');
-}
+    // ── KPI Carousel dots ──
+    function initKpiDots() {
+      const dots = document.getElementById('kpiDots');
+      if (!dots) return;
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) { dots.innerHTML = ''; return; }
+      const cards = document.querySelectorAll('.kpi-card');
+      dots.innerHTML = Array.from(cards).map((_, i) =>
+        `<div class="kpi-dot${i === 0 ? ' active' : ''}" onclick="scrollToKpi(${i})"></div>`
+      ).join('');
+    }
 
-function updateKpiDots() {
-  const carousel = document.getElementById('kpiCarousel');
-  if (!carousel) return;
-  const cards = carousel.querySelectorAll('.kpi-card');
-  const dots = document.querySelectorAll('.kpi-dot');
-  if (!dots.length) return;
-  let closest = 0, minDist = Infinity;
-  cards.forEach((c, i) => {
-    const dist = Math.abs(c.getBoundingClientRect().left - carousel.getBoundingClientRect().left);
-    if (dist < minDist) { minDist = dist; closest = i; }
-  });
-  dots.forEach((d,i) => d.classList.toggle('active', i === closest));
-}
+    function updateKpiDots() {
+      const carousel = document.getElementById('kpiCarousel');
+      if (!carousel) return;
+      const cards = carousel.querySelectorAll('.kpi-card');
+      const dots = document.querySelectorAll('.kpi-dot');
+      if (!dots.length) return;
+      let closest = 0, minDist = Infinity;
+      cards.forEach((c, i) => {
+        const dist = Math.abs(c.getBoundingClientRect().left - carousel.getBoundingClientRect().left);
+        if (dist < minDist) { minDist = dist; closest = i; }
+      });
+      dots.forEach((d, i) => d.classList.toggle('active', i === closest));
+    }
 
-window.addEventListener('resize', initKpiDots);
+    window.addEventListener('resize', initKpiDots);
 
-// ── Init ──
-// Set default filter date range
-const _today = new Date().toISOString().split('T')[0];
-document.getElementById('filter-from').value = _today;
-document.getElementById('filter-to').value   = _today;
-loadData();
-setTimeout(initKpiDots, 300);
-</script>
+    // ── Init ──
+    // Set default filter date range
+    const _today = new Date().toISOString().split('T')[0];
+    document.getElementById('filter-from').value = _today;
+    document.getElementById('filter-to').value = _today;
+    loadData();
+    setTimeout(initKpiDots, 300);
+  </script>
 </body>
+
 </html>
